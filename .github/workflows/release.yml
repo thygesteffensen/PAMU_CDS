@@ -57,6 +57,9 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore PAMU_CDS.sln
 
+      = name: Set Github nuget API
+        run: nuget setapikey ${secrets:GH_TOKEN} -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+
       - name: Package Parser
         run: msbuild /t:pack /p:PackageVersion=${env:RELEASE_VERSION} /p:OutputPath=..\\artifacts
         if: ${{ env.RELEASE_VERSION }}
