@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net48;net462</TargetFrameworks>
+        <RootNamespace>PAMU_CDS</RootNamespace>
+
+        <LangVersion>8</LangVersion> <!-- Max version when using dotnet framework -->
+
+        <DefineConstants Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">DOT_NET_CORE</DefineConstants>
+        <DefineConstants Condition="'$(TargetFramework)' == 'net48' or '$(TargetFramework)' == 'net462'">DOT_NET_FRAMEWORK</DefineConstants>
+
+        <PackageId>PowerAutomateMockUp_CDSceConnector</PackageId>
+        <Authors>thygesteffensen</Authors>
+        <PackageDescription>This is a battery included mock for the Power Automate connector: Common Data Service (current environment). UNDER DEVELOPMENT - FEEL FREE TO USE</PackageDescription>
+<!--        <RepositoryUrl>https://github.com/thygesteffensen/PowerAutomateMockUp</RepositoryUrl>-->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!--<FrameworkReference Include="Microsoft.AspNetCore.App" />-->
+        <PackageReference Include="IXrmMockupExtension" Version="1.3.3-dev.2.0" />
+        <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.28" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.9" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.9" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.9" />
+        <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+        <PackageReference Include="PowerAutomateMockUp" Version="1.0.0-alpha.4" />
+        <PackageReference Include="Sprache" Version="2.3.1" />
+    </ItemGroup>
+
+</Project>
