@@ -55,7 +55,9 @@ jobs:
         uses: microsoft/setup-msbuild@v1
 
       - name: Set Github nuget API
-        run: nuget setapikey ${secrets:GH_TOKEN} -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
 
       - name: Restore NuGet packages
         run: nuget restore PAMU_CDS.sln
