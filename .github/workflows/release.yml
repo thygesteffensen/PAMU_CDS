@@ -55,7 +55,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1
 
       - name: Add nuget Source
-        run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+        run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen
 
       - name: Set Github nuget API
         env:
