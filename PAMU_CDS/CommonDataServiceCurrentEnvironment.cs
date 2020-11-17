@@ -46,7 +46,7 @@ namespace PAMU_CDS
             
             var flows = ApplyCriteria(request);
 
-            var sp = BuildServiceCollection().BuildServiceProvider();
+            var sp = BuildServiceCollection(organizationService).BuildServiceProvider();
             var flowRunner = sp.GetRequiredService<FlowRunner>();
 
             var state = sp.GetRequiredService<IState>();

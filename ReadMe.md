@@ -13,6 +13,7 @@ This will support all the actions provided in the connector, integrated as an ex
 
 * I have modified XrmMockup to enable extension to Mockups core and I have build my own package to avoid messing with the real deal. 
 
+
 ## Repository specifications
 This is the repository for Power Automate MockUp (PAMU) which have a CI/CD pipeline. The version, and triggering of release, is determined from the commits. Semantic-Release is used in the pipeline and it analyzes the commits using (Conventional Commits)[https://www.conventionalcommits.org/en/v1.0.0/].
 
