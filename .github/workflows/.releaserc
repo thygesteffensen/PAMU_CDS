@@ -16,4 +16,4 @@ plugins:
           label: PAMU CDS DLL
 
   - - "@semantic-release/exec"
-    - publishCmd: "dotnet nuget push ..\\..\\artifacts\\PAMU_CDS.*.nupkg --source https://nuget.pkg.github.com/thygesteffensen/index.json --api-key ${process.env.GITHUB_TOKEN}"
+    - publishCmd: "dotnet nuget push ..\\..\\artifacts\\PowerAutomateMockUp_CDSceConnector.*.nupkg --source https://nuget.pkg.github.com/thygesteffensen/index.json --api-key ${process.env.GITHUB_TOKEN}"
