@@ -12,10 +12,11 @@ namespace PAMU_CDS.Auxiliary
         {
             entity.LogicalName = parameters["entityName"].GetValue<string>();
 
-            foreach (var (k, v) in parameters.Where(kv => kv.Key.StartsWith("item")))
+            foreach (KeyValuePair<string, ValueContainer> keyValuePair in parameters.Where(kv =>
+                kv.Key.StartsWith("item")))
             {
                 // TODO: Figure out how to determine which value is expected.
-                entity.Attributes[k.Replace("item/", "")] = v.GetValue<string>();
+                entity.Attributes[keyValuePair.Key.Replace("item/", "")] = keyValuePair.Value.GetValue<string>();
             }
 
             return entity;
