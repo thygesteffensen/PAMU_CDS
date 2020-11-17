@@ -1,6 +1,6 @@
 ﻿namespace PAMU_CDS.Enums
 {
-    enum Scope
+    public enum Scope
     {
         BusinessUnit,
         Organization,

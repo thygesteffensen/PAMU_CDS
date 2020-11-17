@@ -21,5 +21,18 @@ namespace PAMU_CDS.Auxiliary
 
             return entity;
         }
+
+        public static ValueContainer ToValueContainer(this Entity entity)
+        {
+            var triggerOutputs = new Dictionary<string, ValueContainer>();
+            foreach (var keyValuePair in entity.Attributes)
+            {
+                // TODO: Verify this works!
+                // TODO: Look into the processed fields, starting with '_'
+                triggerOutputs[keyValuePair.Key] = new ValueContainer(keyValuePair.Value.ToString(), true);
+            }
+
+            return new ValueContainer(triggerOutputs);
+        }
     }
 }

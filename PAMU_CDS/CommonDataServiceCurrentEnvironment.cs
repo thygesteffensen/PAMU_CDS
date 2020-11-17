@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using IXrmMockupExtension;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using PAMU_CDS.Actions;
+using PAMU_CDS.Auxiliary;
 using PAMU_CDS.Enums;
 using Parser;
 using Parser.ExpressionParser.Functions.Base;
@@ -16,21 +18,16 @@ namespace PAMU_CDS
     {
         private readonly List<TriggerSkeleton> _triggers;
 
-        public CommonDataServiceCurrentEnvironment()
+        public CommonDataServiceCurrentEnvironment(Uri flowFolderPath)
         {
-            _triggers = new List<TriggerSkeleton>
+            var files = Directory.GetFiles(flowFolderPath.ToString());
+            
+            _triggers = new List<TriggerSkeleton>();
+            
+            foreach (var file in files)
             {
-                new TriggerSkeleton
-                {
-                    TriggerCondition = TriggerCondition.Create,
-                    Table = "account",
-                    Scope = Scope.Organization,
-                    SetTriggeringAttributes = "statuscode,name",
-                    FlowDescription =
-                        new Uri(
-                            @"C:\git\opensource\PowerAutomateMockUp\Test\FlowSamples\PowerAutomateMockUpSampleFlow.json")
-                }
-            };
+                _triggers.AddTo(file);
+            }
         }
 
         public void TriggerExtension(
@@ -43,7 +40,7 @@ namespace PAMU_CDS
             {
                 throw new InvalidOperationException("PAMU_CDS does not support the request.");
             }
-            
+
             var flows = ApplyCriteria(request);
 
             var sp = BuildServiceCollection(organizationService).BuildServiceProvider();
@@ -53,7 +50,8 @@ namespace PAMU_CDS
 
             foreach (var triggerSkeleton in flows)
             {
-                // TODO: Populate the flowRunner with relevant variables before triggering.
+                state.AddTriggerOutputs(currentEntity.ToValueContainer());
+                
                 flowRunner.InitializeFlowRunner(triggerSkeleton.FlowDescription.ToString());
                 flowRunner.Trigger();
             }
@@ -104,8 +102,6 @@ namespace PAMU_CDS
         private static ServiceCollection BuildServiceCollection(IOrganizationService organizationService)
         {
             var services = new ServiceCollection();
-            // services.AddFlowRunner(settings);
-            services.Configure<FlowSettings>(x => x.IgnoreActions.Add("Hej med dig"));
 
             services.AddSingleton(organizationService);
 
