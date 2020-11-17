@@ -8,11 +8,11 @@ using Parser.FlowParser.ActionExecutors;
 
 namespace PAMU_CDS.Actions
 {
-    public class UpdateRecordAction : OpenApiConnectionActionExecutorBase
+    public class DeleteRecordAction : OpenApiConnectionActionExecutorBase
     {
         private readonly IOrganizationService _organizationService;
 
-        public UpdateRecordAction(ExpressionEngine expressionEngine, IOrganizationService organizationService) : base(
+        public DeleteRecordAction(ExpressionEngine expressionEngine, IOrganizationService organizationService) : base(
             expressionEngine)
         {
             _organizationService = organizationService ?? throw new ArgumentNullException(nameof(organizationService));
@@ -25,11 +25,7 @@ namespace PAMU_CDS.Actions
 
             try
             {
-                var request = new UpsertRequest
-                {
-                    Target = entity
-                };
-                _organizationService.Execute(request);
+                _organizationService.Delete(entity.LogicalName, entity.Id);
             }
             catch (InvalidPluginExecutionException)
             {    

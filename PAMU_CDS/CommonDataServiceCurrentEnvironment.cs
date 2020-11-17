@@ -110,17 +110,17 @@ namespace PAMU_CDS
             services.AddSingleton(organizationService);
 
             services.AddFlowActionByFlowType<CreateRecordAction>("CreateRecord");
-            services.AddFlowActionByFlowType<CreateRecordAction>("DeleteRecord");
-            services.AddFlowActionByFlowType<CreateRecordAction>("ExecuteChangeset");
-            services.AddFlowActionByFlowType<CreateRecordAction>("GetItem");
-            services.AddFlowActionByFlowType<CreateRecordAction>("ListRecords");
-            // services.AddFlowActionByFlowType<>("PerformBoundAction");
-            // services.AddFlowActionByFlowType<>("PerformUnboundAction");
-            // services.AddFlowActionByFlowType<>("PredictV2");
-            services.AddFlowActionByFlowType<CreateRecordAction>("AssociateEntities");
-            services.AddFlowActionByFlowType<CreateRecordAction>("DisassociateEntities");
-            services.AddFlowActionByFlowType<CreateRecordAction>("UpdateRecord");
-            // services.AddFlowActionByFlowType<>("UpdateEntityFileImageFieldContent");
+            services.AddFlowActionByFlowType<DeleteRecordAction>("DeleteRecord");
+            // services.AddFlowActionByFlowType<CreateRecordAction>("ExecuteChangeset");
+            // services.AddFlowActionByFlowType<CreateRecordAction>("GetItem");
+            // services.AddFlowActionByFlowType<CreateRecordAction>("ListRecords");
+            // // services.AddFlowActionByFlowType<>("PerformBoundAction");
+            // // services.AddFlowActionByFlowType<>("PerformUnboundAction");
+            // // services.AddFlowActionByFlowType<>("PredictV2");
+            // services.AddFlowActionByFlowType<CreateRecordAction>("AssociateEntities");
+            // services.AddFlowActionByFlowType<CreateRecordAction>("DisassociateEntities");
+            services.AddFlowActionByFlowType<UpdateRecordAction>("UpdateRecord");
+            // // services.AddFlowActionByFlowType<>("UpdateEntityFileImageFieldContent");
 
             services.AddFlowRunner();
             return services;
