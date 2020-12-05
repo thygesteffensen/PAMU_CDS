@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using PAMU_CDS.Auxiliary;
 using Parser;
 using Parser.ExpressionParser;
@@ -32,7 +33,9 @@ namespace PAMU_CDS.Actions
             try
             {
                 entity.Id = _organizationService.Create(entity);
-                _state.AddOutputs(ActionName, entity.ToValueContainer());
+                
+                var retrievedEntity = _organizationService.Retrieve(entity.LogicalName, entity.Id, new ColumnSet(true));
+                _state.AddOutputs(ActionName, retrievedEntity.ToValueContainer());
             }
             catch (InvalidPluginExecutionException)
             {

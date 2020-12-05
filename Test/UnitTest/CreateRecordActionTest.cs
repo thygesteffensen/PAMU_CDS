@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Moq;
 using Newtonsoft.Json.Linq;
 using PAMU_CDS.Actions;
@@ -26,7 +27,9 @@ namespace Test.UnitTest
                 {
                     Assert.AreEqual("John Doe", entity["name"]);
                 });
-
+            orgServiceMock.Setup(x => x.Retrieve(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<ColumnSet>()))
+                .Returns(new Entity("contact", guid));
+            
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>((input) => input);
 
