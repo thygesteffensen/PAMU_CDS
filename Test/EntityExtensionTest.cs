@@ -56,5 +56,25 @@ namespace Test
 
             Assert.AreEqual("Bryony Shelfley", entity.Attributes["fullname"]);
         }
+
+        [TestMethod]
+        public void TestCreateEntityFromParametersWithoutItems()
+        {
+            var guid = Guid.NewGuid();
+            var entity = new Entity();
+            var entityAsValueContainer =
+                new ValueContainer(new Dictionary<string, ValueContainer>
+                {
+                    {"item", new ValueContainer(new Dictionary<string, ValueContainer>())}
+                })
+                {
+                    ["entityName"] = new ValueContainer("contact"),
+                    ["recordId"] = new ValueContainer(guid.ToString())
+                };
+
+            entity.CreateEntityFromParameters(entityAsValueContainer);
+
+            Assert.AreEqual(guid, entity.Id);
+        }
     }
 }

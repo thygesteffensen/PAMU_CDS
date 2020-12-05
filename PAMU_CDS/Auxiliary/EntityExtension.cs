@@ -13,13 +13,23 @@ namespace PAMU_CDS.Auxiliary
         {
             // Dynamics API uses plural names for entites/tables, which isn't the name used as logical names...
             var entityName = parameters["entityName"].GetValue<string>();
-            entity.LogicalName = entityName.Substring(0, entityName.Length - 1); 
+            entity.LogicalName = entityName.Substring(0, entityName.Length - 1);
 
-            foreach (KeyValuePair<string, ValueContainer> keyValuePair in parameters["item"]
-                .GetValue<Dictionary<string, ValueContainer>>())
+            var parametersDict = parameters.GetValue<Dictionary<string, ValueContainer>>();
+
+            if (parametersDict.TryGetValue("recordId", out var recordId))
             {
-                // TODO: Figure out how to determine which value is expected.
-                entity.Attributes[keyValuePair.Key] = keyValuePair.Value.GetValue<string>();
+                entity.Id = new Guid(recordId.GetValue<string>());
+            }
+
+            if (parametersDict.TryGetValue("item", out var items))
+            {
+                foreach (KeyValuePair<string, ValueContainer> keyValuePair in items
+                    .GetValue<Dictionary<string, ValueContainer>>())
+                {
+                    // TODO: Figure out how to determine which value is expected.
+                    entity.Attributes[keyValuePair.Key] = keyValuePair.Value.GetValue<string>();
+                }
             }
 
             return entity;
