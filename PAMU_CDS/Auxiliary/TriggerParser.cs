@@ -17,11 +17,11 @@ namespace PAMU_CDS.Auxiliary
             {
                 TriggerCondition =
                     ToCondition(triggerJson.SelectToken("$..subscriptionRequest/message")),
-                Table = triggerJson.SelectToken("subscriptionRequest/entityname").Value<string>(),
+                Table = triggerJson.SelectToken("$..subscriptionRequest/entityname").Value<string>(),
                 Scope = ToScope(triggerJson.SelectToken("$..subscriptionRequest/scope")),
                 SetTriggeringAttributes =
-                    triggerJson.SelectToken("$..subscriptionRequest/filteringattributes").Value<string>(),
-                FilterExpression = triggerJson.SelectToken("$..subscriptionRequest/message").ToString(),
+                    triggerJson.SelectToken("$..subscriptionRequest/filteringattributes")?.Value<string>(),
+                FilterExpression = triggerJson.SelectToken("$..subscriptionRequest/filterexpression")?.ToString(),
                 RunAs = ToRunAs(triggerJson.SelectToken("$..subscriptionRequest/runas")),
                 FlowDescription = new Uri(flowDefinitionPath),
             };
@@ -33,12 +33,12 @@ namespace PAMU_CDS.Auxiliary
 
         private static RunAs ToRunAs(JToken selectToken)
         {
-            return selectToken.Value<int>() switch
+            return selectToken?.Value<int>() switch
             {
                 1 => RunAs.TriggeringUser,
                 2 => RunAs.RecordOwner,
                 3 => RunAs.ProcessOwner,
-                _ => throw new Exception("RunAs enum value is out of range.")
+                _ => RunAs.ProcessOwner
             };
         }
 

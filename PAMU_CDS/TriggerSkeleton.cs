@@ -11,7 +11,7 @@ namespace PAMU_CDS
 
         public string SetTriggeringAttributes
         {
-            set => GetTriggeringAttributes = value.Split(',');
+            set => GetTriggeringAttributes = value?.Split(',');
         }
 
         public string[] GetTriggeringAttributes { get; private set; }
