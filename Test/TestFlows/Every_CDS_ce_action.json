@@ -1,0 +1,175 @@
+﻿{
+  "name": "9400c4ca-c6ec-4732-b617-76ef1ec8552c",
+  "id": "/providers/Microsoft.Flow/flows/9400c4ca-c6ec-4732-b617-76ef1ec8552c",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "Every CDS ce action",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "When_a_record_is_created,_updated_or_deleted": {
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 1,
+              "subscriptionRequest/entityname": "contact",
+              "subscriptionRequest/scope": 4
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Get_file_or_image_content": {
+          "runAfter": {
+            "List_records": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "GetEntityFileImageFieldContent",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "contacts",
+              "recordId": "@triggerOutputs()?['body/contactid']",
+              "fileImageFieldName": "entityimage"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Relate_records": {
+          "runAfter": {
+            "Get_file_or_image_content": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "AssociateEntities",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "contacts",
+              "recordId": "@triggerOutputs()?['body/contactid']",
+              "associationEntityRelationship": "account_primary_contact",
+              "item/@odata.id": "fullresourcepath"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Unrelate_records": {
+          "runAfter": {
+            "Relate_records": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "DisassociateEntities",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "contacts",
+              "recordId": "@triggerOutputs()?['body/contactid']",
+              "associationEntityRelationship": "account_primary_contact",
+              "$id": "fullresourcepath"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_a_record": {
+          "runAfter": {},
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "contacts",
+              "recordId": "@triggerOutputs()?['body/contactid']",
+              "$select": "firstname, lastname, fullname, jobtitle",
+              "$expand": "dca_contact_dca_socialsecurityno"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "List_records": {
+          "runAfter": {
+            "Terminate": [
+              "Succeeded"
+            ]
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "contacts",
+              "$filter": "dca_socialsecurityno eq '@{triggerOutputs()?['body/contactid']}"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Terminate": {
+          "runAfter": {
+            "Compose": [
+              "Succeeded"
+            ]
+          },
+          "type": "Terminate",
+          "inputs": {
+            "runStatus": "Succeeded"
+          }
+        },
+        "Compose": {
+          "runAfter": {
+            "Get_a_record": [
+              "Succeeded"
+            ]
+          },
+          "type": "Compose",
+          "inputs": "@outputs('Get_a_record')"
+        }
+      },
+      "outputs": {}
+    },
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "source": "Embedded",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+        "tier": "NotSpecified"
+      }
+    },
+    "flowFailureAlertSubscribed": false
+  }
+}
