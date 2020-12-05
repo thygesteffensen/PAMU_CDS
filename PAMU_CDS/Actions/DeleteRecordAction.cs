@@ -11,7 +11,7 @@ namespace PAMU_CDS.Actions
     {
         private readonly IOrganizationService _organizationService;
 
-        public DeleteRecordAction(ExpressionEngine expressionEngine, IOrganizationService organizationService) : base(
+        public DeleteRecordAction(IExpressionEngine expressionEngine, IOrganizationService organizationService) : base(
             expressionEngine)
         {
             _organizationService = organizationService ?? throw new ArgumentNullException(nameof(organizationService));
@@ -27,7 +27,7 @@ namespace PAMU_CDS.Actions
                 _organizationService.Delete(entity.LogicalName, entity.Id);
             }
             catch (InvalidPluginExecutionException)
-            {    
+            {
                 // We need to do some experiments on how the error handling works. Take a look at one of your customers.
                 return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Failed});
             }
