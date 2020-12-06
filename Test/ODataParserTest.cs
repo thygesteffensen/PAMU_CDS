@@ -54,14 +54,14 @@ namespace Test
         [TestMethod]
         public void TestOdataParser2()
         {
-            const string selectQuery = "dca_contact_dca_socialsecurityno";
+            const string selectQuery = "some_relationship";
 
             var oDataParser = new OdataParser();
 
             var oData = oDataParser.Get(selectQuery);
 
             Assert.AreEqual(1, oData.Length);
-            Assert.AreEqual("dca_contact_dca_socialsecurityno", oData[0].Option);
+            Assert.AreEqual("some_relationship", oData[0].Option);
 
         }
         

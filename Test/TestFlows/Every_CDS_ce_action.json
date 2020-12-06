@@ -115,7 +115,7 @@
               "entityName": "contacts",
               "recordId": "@triggerOutputs()?['body/contactid']",
               "$select": "firstname, lastname, fullname, jobtitle",
-              "$expand": "dca_contact_dca_socialsecurityno"
+              "$expand": "some_relationship"
             },
             "authentication": "@parameters('$authentication')"
           }
@@ -135,7 +135,7 @@
             },
             "parameters": {
               "entityName": "contacts",
-              "$filter": "dca_socialsecurityno eq '@{triggerOutputs()?['body/contactid']}"
+              "$filter": "some eq '@{triggerOutputs()?['body/contactid']}"
             },
             "authentication": "@parameters('$authentication')"
           }
