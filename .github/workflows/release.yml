@@ -13,6 +13,14 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+    
+      - run: ls
+      
+      - run: ls .\Test\
+          
+      - run: ls .\Test\bin\
+          
+      - run: ls .\Test\bin\Metadata\
 
       - name: Add nuget Source
         env:
