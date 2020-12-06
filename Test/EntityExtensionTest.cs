@@ -25,7 +25,7 @@ namespace Test
             var contactValueContainer = contact.ToValueContainer()["body"];
             var contactValueContainerAsDict = contactValueContainer.GetValue<Dictionary<string, ValueContainer>>();
 
-            Assert.AreEqual(10, contactValueContainerAsDict.Keys.Count,
+            Assert.AreEqual(11, contactValueContainerAsDict.Keys.Count,
                 "Number of values in value container does not match.");
 
             Assert.IsTrue(

@@ -14,18 +14,9 @@ namespace Test
             // Black box test
             var contact = new Entity("contact");
             
-            // contact.Id = OrgAdminService.Create(contact);
+            contact.Id = OrgAdminService.Create(contact);
             
-            var query = new QueryExpression();
-                
-            var request = new RetrieveRelationshipRequest
-            {
-                Name = "contact_principalobjectattributeaccess"
-            };
-
-            var response = (RetrieveRelationshipResponse) OrgAdminService.Execute(request);
-            
-            var retrievedContact = OrgAdminService.Retrieve(contact.LogicalName, contact.Id, new ColumnSet("jobtitle", "abc123"));
+            var retrievedContact = OrgAdminService.Retrieve(contact.LogicalName, contact.Id, new ColumnSet("jobtitle"));
 
             Assert.IsNotNull(retrievedContact);
             Assert.AreEqual("Technical Supervisor", retrievedContact.Attributes["jobtitle"]);
