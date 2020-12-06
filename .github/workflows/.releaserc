@@ -19,4 +19,4 @@ plugins:
     - publishCmd: "dotnet nuget push ..\\..\\artifacts\\PAMU_CDSce.*.nupkg --source https://nuget.pkg.github.com/thygesteffensen/index.json --api-key ${process.env.GITHUB_TOKEN}"
       
   - - "@semantic-release/exec"
-      - publishCmd: "dotnet nuget push ..\\..\\artifacts\\PAMU_CDSce.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${process.env.CI_NUGET_API_KEY}"
+    - publishCmd: "dotnet nuget push ..\\..\\artifacts\\PAMU_CDSce.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${process.env.CI_NUGET_API_KEY}"
