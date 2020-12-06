@@ -18,12 +18,15 @@ namespace Test.UnitTest
         {
             var guid = Guid.NewGuid();
 
+            string deleteEntityName = null;
+            var deleteEntityId = Guid.Empty;
+
             var orgServiceMock = new Mock<IOrganizationService>();
             orgServiceMock.Setup(x => x.Delete(It.IsAny<string>(), It.IsAny<Guid>()))
-                .Callback<string,Guid>((entityName, id) =>
+                .Callback<string, Guid>((entityName, id) =>
                 {
-                    Assert.AreEqual("account", entityName);
-                    Assert.AreEqual(guid, id);
+                    deleteEntityName = entityName;
+                    deleteEntityId = id;
                 });
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
@@ -41,6 +44,11 @@ namespace Test.UnitTest
             deleteActionExecutor.InitializeActionExecutor("DeleteContact", JToken.Parse(actionDescription));
 
             var response = await deleteActionExecutor.Execute();
+
+            Assert.IsNotNull(deleteEntityName);
+            Assert.AreEqual("account", deleteEntityName);
+            Assert.AreEqual(guid, deleteEntityId);
+
 
             Assert.AreEqual(ActionStatus.Succeeded, response.ActionStatus);
             Assert.AreEqual(true, response.ContinueExecution);

@@ -22,24 +22,14 @@ namespace Test.UnitTest
         {
             var guid = Guid.NewGuid();
 
+            OrganizationRequest updateRequest = null;
+            string outputActionName = null;
 
             var orgServiceMock = new Mock<IOrganizationService>();
+
             orgServiceMock.Setup(x => x.Execute(It.IsAny<OrganizationRequest>()))
                 .Returns<OrganizationRequest>(request => new OrganizationResponse())
-                .Callback<OrganizationRequest>(request =>
-                {
-                    Assert.AreEqual(1, request.Parameters.Count);
-                    Assert.IsTrue(request.Parameters.ContainsKey("Target"));
-
-                    _entity = (Entity) request.Parameters["Target"];
-
-                    Assert.AreEqual(3, _entity.Attributes.Count);
-
-                    Assert.IsTrue(_entity.Attributes.ContainsKey("name"));
-                    Assert.IsTrue(_entity.Attributes.ContainsKey("address1_city"));
-                    Assert.IsTrue(_entity.Attributes.ContainsKey("address1_line1"));
-                    Assert.AreEqual("Upsert", request.RequestName);
-                });
+                .Callback<OrganizationRequest>(request => { updateRequest = request; });
 
             orgServiceMock.Setup(x => x.Retrieve(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<ColumnSet>()))
                 .Returns(new Entity("account", guid));
@@ -51,7 +41,7 @@ namespace Test.UnitTest
             stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
                 .Callback<string, ValueContainer>((actionName, valueContainer) =>
                 {
-                    Assert.AreEqual("UpdateAccount", actionName);
+                    outputActionName = actionName;
                 });
 
             var updateActionExecutor =
@@ -68,14 +58,24 @@ namespace Test.UnitTest
 
             var response = await updateActionExecutor.Execute();
 
+            Assert.AreEqual(1, updateRequest.Parameters.Count);
+            Assert.IsTrue(updateRequest.Parameters.ContainsKey("Target"));
+
+            _entity = (Entity) updateRequest.Parameters["Target"];
+
+            Assert.AreEqual(3, _entity.Attributes.Count);
+
+            Assert.IsTrue(_entity.Attributes.ContainsKey("name"));
+            Assert.IsTrue(_entity.Attributes.ContainsKey("address1_city"));
+            Assert.IsTrue(_entity.Attributes.ContainsKey("address1_line1"));
+            Assert.AreEqual("Upsert", updateRequest.RequestName);
+            
+            Assert.IsNotNull(outputActionName);
+            Assert.AreEqual("UpdateAccount", outputActionName);
+
             Assert.AreEqual(ActionStatus.Succeeded, response.ActionStatus);
             Assert.AreEqual(true, response.ContinueExecution);
             Assert.AreEqual(null, response.NextAction);
-        }
-
-        private Entity GetEntity()
-        {
-            return _entity;
         }
     }
 }

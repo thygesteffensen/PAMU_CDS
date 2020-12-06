@@ -20,30 +20,32 @@ namespace Test.UnitTest
         {
             var guid = Guid.NewGuid();
 
+            Entity createEntity = null;
+            string outputActionName = null;
+
             var orgServiceMock = new Mock<IOrganizationService>();
+
             orgServiceMock.Setup(x => x.Create(It.IsAny<Entity>()))
-                .Returns(guid)
-                .Callback<Entity>((entity) =>
-                {
-                    Assert.AreEqual("John Doe", entity["name"]);
-                });
+                .Callback<Entity>(entity => { createEntity = entity; })
+                .Returns(guid);
+            
             orgServiceMock.Setup(x => x.Retrieve(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<ColumnSet>()))
                 .Returns(new Entity("contact", guid));
-            
+
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>((input) => input);
 
             var stateMock = new Mock<IState>();
             stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
-                .Callback<string,ValueContainer>((actionName, valueContainer) =>
+                .Callback<string, ValueContainer>((actionName, valueContainer) =>
                 {
-                    Assert.AreEqual("CreateContact", actionName);
+                    outputActionName = actionName;
                 });
 
             var createActionExecutor =
                 new CreateRecordAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object);
 
-            var actionDescription = 
+            var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +
                 "\"inputs\":" +
                 "{\"host\":{\"connectionName\":\"shared_commondataserviceforapps\",\"operationId\":\"CreateRecord\",\"apiId\":\"/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps\"}," +
@@ -52,6 +54,12 @@ namespace Test.UnitTest
             createActionExecutor.InitializeActionExecutor("CreateContact", JToken.Parse(actionDescription));
 
             var response = await createActionExecutor.Execute();
+
+            Assert.IsNotNull(createEntity);
+            Assert.AreEqual("John Doe", createEntity["name"]);
+            
+            Assert.IsNotNull(outputActionName);
+            Assert.AreEqual("CreateContact", outputActionName);
             
             Assert.AreEqual(ActionStatus.Succeeded, response.ActionStatus);
             Assert.AreEqual(true, response.ContinueExecution);
