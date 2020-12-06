@@ -41,6 +41,8 @@ namespace PAMU_CDS.Auxiliary
             foreach (var keyValuePair in entity.Attributes)
             {
                 AddObjectToValueContainer(triggerOutputs, keyValuePair);
+                
+                triggerOutputs["@odata.type"] = new ValueContainer($"#Microsoft.Dynamics.CRM.{entity.LogicalName}");
             }
 
             return new ValueContainer(new Dictionary<string, ValueContainer>

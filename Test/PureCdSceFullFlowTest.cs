@@ -15,7 +15,7 @@ namespace Test
             
             contact.Id = OrgAdminService.Create(contact);
             
-            var retrievedContact = OrgAdminService.Retrieve(contact.LogicalName, contact.Id, new ColumnSet("jobtitle"));
+            var retrievedContact = OrgAdminService.Retrieve(contact.LogicalName, contact.Id, new ColumnSet("jobtitle", "abc123"));
 
             Assert.IsNotNull(retrievedContact);
             Assert.AreEqual("Technical Supervisor", retrievedContact.Attributes["jobtitle"]);
