@@ -28,7 +28,6 @@ namespace Test
         public void TestOdataParser1()
         {
             const string selectQuery = "primarycontactid($select=contactid,fullname;$orderby=createdon asc;$filter=endswith(subject,'1'))";
-            const string selectQuery = "$expand=primarycontactid($filter=endswith(subject,'1'))";
 
             var oDataParser = new OdataParser();
 
@@ -36,11 +35,20 @@ namespace Test
 
             Assert.AreEqual(1, oData.Length);
             Assert.AreEqual("primarycontactid", oData[0].Option);
-            Assert.AreEqual(1, oData[0].Parameters.Length);
+            Assert.AreEqual(3, oData[0].Parameters.Length);
+            
             Assert.AreEqual("select", oData[0].Parameters[0].Name);
             Assert.AreEqual(2, oData[0].Parameters[0].Properties.Length);
             Assert.AreEqual("contactid", oData[0].Parameters[0].Properties[0]);
             Assert.AreEqual("fullname", oData[0].Parameters[0].Properties[1]);
+            
+            Assert.AreEqual("orderby", oData[0].Parameters[1].Name);
+            Assert.AreEqual(1, oData[0].Parameters[1].Properties.Length);
+            Assert.AreEqual("createdon asc", oData[0].Parameters[1].Properties[0]);
+            
+            Assert.AreEqual("filter", oData[0].Parameters[2].Name);
+            Assert.AreEqual(1, oData[0].Parameters[2].Properties.Length);
+            Assert.AreEqual("endswith(subject,'1')", oData[0].Parameters[2].Properties[0]);
         }
         
         [TestMethod]
@@ -53,6 +61,8 @@ namespace Test
             var oData = oDataParser.Get(selectQuery);
 
             Assert.AreEqual(1, oData.Length);
+            Assert.AreEqual("dca_contact_dca_socialsecurityno", oData[0].Option);
+
         }
         
         [TestMethod]
@@ -64,7 +74,15 @@ namespace Test
 
             var oData = oDataParser.Get(selectQuery);
 
-            Assert.AreEqual(1, oData.Length);
+            Assert.AreEqual(2, oData.Length);
+            
+            Assert.AreEqual("relationship_1", oData[0].Option);
+            
+            Assert.AreEqual("relationship_2", oData[1].Option);
+            Assert.AreEqual(1, oData[1].Parameters.Length);
+            Assert.AreEqual("select", oData[1].Parameters[0].Name);
+            Assert.AreEqual(1, oData[1].Parameters[0].Properties.Length);
+            Assert.AreEqual("name", oData[1].Parameters[0].Properties[0]);
         }
         
     }
