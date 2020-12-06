@@ -14,8 +14,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-  #      - name: Run tests
-  #        run: dotnet test --verbosity normal
+      - name: Run tests
+        run: dotnet test --verbosity normal
 
   release:
     name: Releasing
@@ -58,11 +58,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
-
-#      - name: Set Github nuget API
-#        env:
-#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-#        run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
 
       - name: Restore NuGet packages
         run: nuget restore PAMU_CDS.sln
