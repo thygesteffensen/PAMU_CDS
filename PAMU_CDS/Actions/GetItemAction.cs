@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using PAMU_CDS.Auxiliary;
 using Parser;
@@ -14,39 +18,39 @@ namespace PAMU_CDS.Actions
     {
         private readonly IOrganizationService _organizationService;
         private readonly IState _state;
+        private readonly ILogger<GetItemAction> _logger;
 
         public GetItemAction(
             IExpressionEngine expressionEngine,
             IOrganizationService organizationService,
-            IState state) : base(expressionEngine)
+            IState state,
+            ILogger<GetItemAction> logger) : base(expressionEngine)
         {
             _organizationService = organizationService ?? throw new ArgumentNullException(nameof(organizationService));
             _state = state ?? throw new ArgumentNullException(nameof(state));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public override Task<ActionResult> Execute()
         {
-            var entityName = Parameters["entityName"].GetValue<string>();
-            var recordId = new Guid(Parameters["recordId"].GetValue<string>());
+            var entity = new Entity();
+            entity.CreateEntityFromParameters(Parameters);
 
-
-            var columnSet = BuildColumnSet();
-
-            var expandedEntities = GetExpandedEntities();
+            var expandedEntities = GetExpandedEntities(entity.LogicalName);
 
             try
             {
                 var retrieveRequest = new RetrieveRequest
                 {
-                    Target = new EntityReference(entityName, recordId),
-                    ColumnSet = columnSet,
+                    Target = new EntityReference(entity.LogicalName, entity.Id),
+                    ColumnSet = BuildColumnSet(),
                     RelatedEntitiesQuery = expandedEntities
                 };
 
                 var response = (RetrieveResponse) _organizationService.Execute(retrieveRequest);
 
-                
-                // _state.AddOutputs(ActionName, response.ToValueContainer());
+
+                _state.AddOutputs(ActionName, response.Entity.ToValueContainer());
             }
             catch (InvalidPluginExecutionException)
             {
@@ -66,14 +70,50 @@ namespace PAMU_CDS.Actions
             return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});
         }
 
-        private RelationshipQueryCollection GetExpandedEntities()
+        private RelationshipQueryCollection GetExpandedEntities(string entityName)
         {
-            var t  = new RelationshipQueryCollection();
+            var paras = Parameters.GetValue<Dictionary<string, ValueContainer>>();
+            if (!paras.ContainsKey("$expand")) return null;
+            
+            var t = new RelationshipQueryCollection();
 
-            var expand = Parameters["$expand"];
-            
-            
-            
+            var p = new OdataParser();
+            // TODO: Refactor with version alpha.18
+            var expand = p.Get(Parameters["$expand"].GetValue<string>());
+
+
+            foreach (var value in expand)
+            {
+                var relationship = ((RetrieveRelationshipResponse) _organizationService.Execute(
+                        new RetrieveRelationshipRequest
+                        {
+                            Name = value.Option
+                        }))
+                    .RelationshipMetadata;
+
+                var query = new QueryExpression
+                {
+                    ColumnSet = new ColumnSet(true),
+                    EntityName = relationship switch
+                    {
+                        OneToManyRelationshipMetadata r when r.ReferencingEntity == entityName => r.ReferencedEntity,
+                        OneToManyRelationshipMetadata r when r.ReferencedEntity == entityName => r.ReferencingEntity,
+                        ManyToManyRelationshipMetadata r when r.Entity1LogicalName == entityName =>
+                            r.Entity2LogicalName,
+                        ManyToManyRelationshipMetadata r when r.Entity2LogicalName == entityName =>
+                            r.Entity1LogicalName,
+                        _ => throw new PowerAutomateException("Relationship not known...")
+                    }
+                };
+
+                var select = value.Parameters.FirstOrDefault(x => x.Name == "$select");
+                if (select != null)
+                {
+                    query.ColumnSet = new ColumnSet(string.Join(",", select.Properties));
+                }
+
+                t.Add(new Relationship(value.Option), query);
+            }
 
             return t;
         }
@@ -81,7 +121,9 @@ namespace PAMU_CDS.Actions
         private ColumnSet BuildColumnSet()
         {
             var columnSet = new ColumnSet();
-            if (Parameters["$select"].Type() == ValueContainer.ValueType.Null)
+            // TODO: Refactor with version alpha.18
+            var paras = Parameters.GetValue<Dictionary<string, ValueContainer>>();
+            if (!paras.ContainsKey("$select"))
             {
                 columnSet.AllColumns = true;
             }
