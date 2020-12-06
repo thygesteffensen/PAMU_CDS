@@ -14,6 +14,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Add nuget Source
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
+    
+      - name: Set Github nuget API
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+
       - name: Run tests
         run: dotnet test --verbosity normal
 
