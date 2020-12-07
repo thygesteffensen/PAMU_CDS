@@ -52,7 +52,7 @@ namespace PAMU_CDS
                 using var scope = sp.CreateScope();
                 var isp = scope.ServiceProvider;
                 var state = sp.GetRequiredService<IState>();
-                
+
                 state.AddTriggerOutputs(currentEntity.ToValueContainer());
 
                 var flowRunner = sp.GetRequiredService<FlowRunner>();
@@ -119,10 +119,20 @@ namespace PAMU_CDS
             services.AddFlowActionByApiIdAndOperationsName<CdsTrigger>(apiId,
                 new[] {"SubscribeWebhookTrigger"});
 
-            services.AddFlowActionByApiIdAndOperationsName<CreateRecordAction>(apiId, new[] {"CreateRecord"});
-            services.AddFlowActionByApiIdAndOperationsName<UpdateRecordAction>(apiId, new[] {"UpdateRecord"});
-            services.AddFlowActionByApiIdAndOperationsName<DeleteRecordAction>(apiId, new[] {"DeleteRecord"});
-            services.AddFlowActionByApiIdAndOperationsName<GetItemAction>(apiId, new[] {"GetItem"});
+            services.AddFlowActionByApiIdAndOperationsName<CreateRecordAction>(apiId,
+                new[] {CreateRecordAction.OperationId});
+            
+            services.AddFlowActionByApiIdAndOperationsName<UpdateRecordAction>(apiId,
+                new[] {UpdateRecordAction.OperationId});
+            
+            services.AddFlowActionByApiIdAndOperationsName<DeleteRecordAction>(apiId,
+                new[] {DeleteRecordAction.OperationId});
+            
+            services.AddFlowActionByApiIdAndOperationsName<GetItemAction>(apiId,
+                new[] {GetItemAction.OperationId});
+            
+            services.AddFlowActionByApiIdAndOperationsName<AssociateEntitiesAction>(apiId,
+                new[] {AssociateEntitiesAction.OperationId});
             // services.AddFlowActionByFlowType<CreateRecordAction>("ExecuteChangeset");
             // services.AddFlowActionByFlowType<CreateRecordAction>("ListRecords");
             // // services.AddFlowActionByFlowType<>("PerformBoundAction");

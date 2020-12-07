@@ -16,6 +16,8 @@ namespace PAMU_CDS.Actions
 {
     public class GetItemAction : OpenApiConnectionActionExecutorBase
     {
+        public const string OperationId = "GetItem";
+
         private readonly IOrganizationService _organizationService;
         private readonly IState _state;
         private readonly ILogger<GetItemAction> _logger;

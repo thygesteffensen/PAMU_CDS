@@ -12,6 +12,8 @@ namespace PAMU_CDS.Actions
 {
     public class UpdateRecordAction : OpenApiConnectionActionExecutorBase
     {
+        public const string OperationId = "UpdateRecord";
+        
         private readonly IOrganizationService _organizationService;
         private readonly IState _state;
 

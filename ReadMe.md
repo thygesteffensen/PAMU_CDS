@@ -27,21 +27,6 @@ This is both a full featured mock and an example of how to use [Power Automate M
 
 This mock i build using [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup) as the flow engine and [XrmMockup](https://github.com/delegateas/XrmMockup) to mock the underlying Dynamics 365.
 
-## Code style
-The code is written using [Riders](https://www.jetbrains.com/help/rider/Settings_Code_Style_CSHARP.html) default C# code style.
-
-Commits are written in [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style, the commit messages are used to determine the version and when to release a new version. The pipeline is hosted on Github and [Semantic Release](https://github.com/semantic-release/semantic-release) is used.
-
-## Installation
-
-Currently the project is still in alpha. To find the packages at nuget.com, you have to check 'Prerelease', before the nuget appears.
-
-You also need a modified version of [XrmMockup](https://github.com/delegateas/XrmMockup), you can find that [here]()
-
-## Tests
-
-Tests are located in the **Tests** project and they are written using Nunit as test framework.
-
 ## How to use
 
 ### Introduction
@@ -49,7 +34,7 @@ This is a fully featured mock for the CDS ce connector and it works OOB if you'r
 
 ### Getting Started
 
-First of all, replace your XrmMockup dependency with the development version developed to this project. The development version is build on the latest version of XrmMockup
+First of all, replace your XrmMockup dependency with the development version developed to this project. The development version is build on the latest version of XrmMockup.
 
 When configuring XrmMockup, add the following:
 ```c#
@@ -73,6 +58,21 @@ Coming soon
 
 ### Asserting Actions
 Coming soon
+
+## Code style
+The code is written using [Riders](https://www.jetbrains.com/help/rider/Settings_Code_Style_CSHARP.html) default C# code style.
+
+Commits are written in [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style, the commit messages are used to determine the version and when to release a new version. The pipeline is hosted on Github and [Semantic Release](https://github.com/semantic-release/semantic-release) is used.
+
+## Installation
+
+Currently the project is still in alpha. To find the packages at nuget.com, you have to check 'Prerelease', before the nuget appears.
+
+You also need a modified version of [XrmMockup](https://github.com/delegateas/XrmMockup), you can find that [here]()
+
+## Tests
+
+Tests are located in the **Tests** project and they are written using Nunit as test framework.
 
 ## Contribute
 
