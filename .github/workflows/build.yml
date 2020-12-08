@@ -52,7 +52,7 @@ jobs:
         run: dotnet test --verbosity normal
 
       - name: Restore NuGet packages
-        run: nuget restore PowerAutomateMockUp.sln
+        run: nuget restore PAMU_CDS.sln
 
       - name: Build solution
         run: msbuild /p:OutputPath=../build /p:Configuration=Release /p:RestorePackages=false
