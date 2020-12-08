@@ -2,15 +2,13 @@
 using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Query;
 using PAMU_CDS.Auxiliary;
-using Parser;
 using Parser.ExpressionParser;
 using Parser.FlowParser.ActionExecutors;
 
 namespace PAMU_CDS.Actions
 {
-    public class AssociateEntitiesAction : OpenApiConnectionActionExecutorBase
+    public class DisAndAssociateEntitiesAction : OpenApiConnectionActionExecutorBase
     {
         private const string AssociateId = "AssociateEntitiesAction";
         private const string DisassociateId = "DisassociateEntities";
@@ -18,7 +16,7 @@ namespace PAMU_CDS.Actions
 
         private readonly IOrganizationService _organizationService;
 
-        public AssociateEntitiesAction(
+        public DisAndAssociateEntitiesAction(
             IExpressionEngine expressionEngine,
             IOrganizationService organizationService) : base(expressionEngine)
         {
@@ -60,7 +58,7 @@ namespace PAMU_CDS.Actions
                 }
                 default:
                     throw new PowerAutomateException(
-                        $"Action {nameof(AssociateEntitiesAction)} can only handle {AssociateId} and {DisassociateId} operations, not {Host.OperationId}.");
+                        $"Action {nameof(DisAndAssociateEntitiesAction)} can only handle {AssociateId} and {DisassociateId} operations, not {Host.OperationId}.");
             }
             
             try
