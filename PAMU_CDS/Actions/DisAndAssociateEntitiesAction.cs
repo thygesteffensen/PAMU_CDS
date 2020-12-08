@@ -10,7 +10,7 @@ namespace PAMU_CDS.Actions
 {
     public class DisAndAssociateEntitiesAction : OpenApiConnectionActionExecutorBase
     {
-        private const string AssociateId = "AssociateEntitiesAction";
+        private const string AssociateId = "AssociateEntities";
         private const string DisassociateId = "DisassociateEntities";
         public static readonly string[] OperationId = {AssociateId, DisassociateId};
 
@@ -29,13 +29,13 @@ namespace PAMU_CDS.Actions
             var entity = new Entity();
             entity = entity.CreateEntityFromParameters(Parameters);
 
-            AssociateRequest associateRequest;
+            OrganizationRequest associateRequest;
 
             switch (Host.OperationId)
             {
                 case AssociateId:
                 {
-                    var relatedEntity = ExtractEntityReferenceFromOdataId("@odata.id");
+                    var relatedEntity = ExtractEntityReferenceFromOdataId("item/@odata.id");
                     associateRequest = new AssociateRequest
                     {
                         Target = entity.ToEntityReference(),
@@ -48,7 +48,7 @@ namespace PAMU_CDS.Actions
                 {
                     var relatedEntity = ExtractEntityReferenceFromOdataId("$id");
 
-                    associateRequest = new AssociateRequest
+                    associateRequest = new DisassociateRequest
                     {
                         Target = entity.ToEntityReference(),
                         Relationship = new Relationship(Parameters["associationEntityRelationship"].GetValue<string>()),
@@ -80,7 +80,7 @@ namespace PAMU_CDS.Actions
         {
             // https://dglab6.crm4.dynamics.com/api/data/v9.1/contacts(8c711383-b933-eb11-a813-000d3ab11761)
 
-            var oDataId = Parameters[$"item/{itemKey}"].GetValue<string>();
+            var oDataId = Parameters[itemKey].GetValue<string>();
             var entityName =
                 oDataId.Substring(oDataId.LastIndexOf('/') + 1, oDataId.IndexOf('(') - oDataId.LastIndexOf('/') - 2);
             var entityId = oDataId.Substring(oDataId.IndexOf('(') + 1, oDataId.IndexOf(')') - oDataId.IndexOf('(') - 1);
