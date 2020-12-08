@@ -1,6 +1,6 @@
 ﻿namespace PAMU_CDS.Enums
 {
-    enum TriggerCondition
+    public enum TriggerCondition
     {
         Create,
         CreateDelete,

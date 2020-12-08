@@ -3,7 +3,7 @@ using PAMU_CDS.Enums;
 
 namespace PAMU_CDS
 {
-    class TriggerSkeleton
+    public class TriggerSkeleton
     {
         public TriggerCondition TriggerCondition { get; set; }
         public string Table { get; set; }
@@ -11,7 +11,7 @@ namespace PAMU_CDS
 
         public string SetTriggeringAttributes
         {
-            set => GetTriggeringAttributes = value.Split(',');
+            set => GetTriggeringAttributes = value?.Split(',');
         }
 
         public string[] GetTriggeringAttributes { get; private set; }
