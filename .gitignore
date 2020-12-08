@@ -431,3 +431,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # End of https://www.toptal.com/developers/gitignore/api/rider,csharp
+PAMU_CDS.sln.DotSettings
+PAMU_CDS/Properties/
+build/*.dll
+build/*.config
