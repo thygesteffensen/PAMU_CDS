@@ -12,7 +12,9 @@ namespace PAMU_CDS.Actions
 {
     public class AssociateEntitiesAction : OpenApiConnectionActionExecutorBase
     {
-        public static readonly string[] OperationId = {"AssociateEntitiesAction","DisassociateEntities"};
+        private const string AssociateId = "AssociateEntitiesAction";
+        private const string DisassociateId = "DisassociateEntities";
+        public static readonly string[] OperationId = {AssociateId, DisassociateId};
 
         private readonly IOrganizationService _organizationService;
 
@@ -29,19 +31,42 @@ namespace PAMU_CDS.Actions
             var entity = new Entity();
             entity = entity.CreateEntityFromParameters(Parameters);
 
+            AssociateRequest associateRequest;
+
+            switch (Host.OperationId)
+            {
+                case AssociateId:
+                {
+                    var relatedEntity = ExtractEntityReferenceFromOdataId("@odata.id");
+                    associateRequest = new AssociateRequest
+                    {
+                        Target = entity.ToEntityReference(),
+                        Relationship = new Relationship(Parameters["associationEntityRelationship"].GetValue<string>()),
+                        RelatedEntities = new EntityReferenceCollection {relatedEntity}
+                    };
+                    break;
+                }
+                case DisassociateId:
+                {
+                    var relatedEntity = ExtractEntityReferenceFromOdataId("$id");
+
+                    associateRequest = new AssociateRequest
+                    {
+                        Target = entity.ToEntityReference(),
+                        Relationship = new Relationship(Parameters["associationEntityRelationship"].GetValue<string>()),
+                        RelatedEntities = new EntityReferenceCollection {relatedEntity}
+                    };
+                    break;
+                }
+                default:
+                    throw new PowerAutomateException(
+                        $"Action {nameof(AssociateEntitiesAction)} can only handle {AssociateId} and {DisassociateId} operations, not {Host.OperationId}.");
+            }
+            
             try
             {
                 // TODO: Figure out how this handle bad associations and error handling.
                 // assignees: thygesteffensen
-                var relatedEntity = ExtractEntityReferenceFromOdataId();
-
-                var associateRequest = new AssociateRequest
-                {
-                    Target = entity.ToEntityReference(),
-                    Relationship = new Relationship(Parameters["associationEntityRelationship"].GetValue<string>()),
-                    RelatedEntities = new EntityReferenceCollection {relatedEntity}
-                };
-
                 _organizationService.Execute(associateRequest);
             }
             catch (InvalidPluginExecutionException)
@@ -53,14 +78,14 @@ namespace PAMU_CDS.Actions
             return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});
         }
 
-        private EntityReference ExtractEntityReferenceFromOdataId()
+        private EntityReference ExtractEntityReferenceFromOdataId(string itemKey)
         {
             // https://dglab6.crm4.dynamics.com/api/data/v9.1/contacts(8c711383-b933-eb11-a813-000d3ab11761)
 
-            var oDataId = Parameters["item/@odata.id"].GetValue<string>();
+            var oDataId = Parameters[$"item/{itemKey}"].GetValue<string>();
             var entityName =
-                oDataId.Substring(oDataId.LastIndexOf('/')+1, oDataId.IndexOf('(') - oDataId.LastIndexOf('/')-2);
-            var entityId = oDataId.Substring(oDataId.IndexOf('(')+1, oDataId.IndexOf(')') - oDataId.IndexOf('(')-1);
+                oDataId.Substring(oDataId.LastIndexOf('/') + 1, oDataId.IndexOf('(') - oDataId.LastIndexOf('/') - 2);
+            var entityId = oDataId.Substring(oDataId.IndexOf('(') + 1, oDataId.IndexOf(')') - oDataId.IndexOf('(') - 1);
 
             return new EntityReference(entityName, new Guid(entityId));
         }
