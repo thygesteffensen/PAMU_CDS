@@ -121,18 +121,18 @@ namespace PAMU_CDS
 
             services.AddFlowActionByApiIdAndOperationsName<CreateRecordAction>(apiId,
                 new[] {CreateRecordAction.OperationId});
-            
+
             services.AddFlowActionByApiIdAndOperationsName<UpdateRecordAction>(apiId,
                 new[] {UpdateRecordAction.OperationId});
-            
+
             services.AddFlowActionByApiIdAndOperationsName<DeleteRecordAction>(apiId,
                 new[] {DeleteRecordAction.OperationId});
-            
+
             services.AddFlowActionByApiIdAndOperationsName<GetItemAction>(apiId,
                 new[] {GetItemAction.OperationId});
-            
+
             services.AddFlowActionByApiIdAndOperationsName<AssociateEntitiesAction>(apiId,
-                new[] {AssociateEntitiesAction.OperationId});
+                AssociateEntitiesAction.OperationId);
             // services.AddFlowActionByFlowType<CreateRecordAction>("ExecuteChangeset");
             // services.AddFlowActionByFlowType<CreateRecordAction>("ListRecords");
             // // services.AddFlowActionByFlowType<>("PerformBoundAction");

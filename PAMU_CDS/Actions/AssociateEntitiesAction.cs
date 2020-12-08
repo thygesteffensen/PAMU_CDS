@@ -12,7 +12,7 @@ namespace PAMU_CDS.Actions
 {
     public class AssociateEntitiesAction : OpenApiConnectionActionExecutorBase
     {
-        public const string OperationId = "AssociateEntitiesAction";
+        public static readonly string[] OperationId = {"AssociateEntitiesAction","DisassociateEntities"};
 
         private readonly IOrganizationService _organizationService;
 
