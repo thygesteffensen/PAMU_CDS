@@ -4,6 +4,8 @@
         <TargetFrameworks>net48;net462</TargetFrameworks>
 
         <IsPackable>false</IsPackable>
+
+        <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,13 +19,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PAMU_CDS\PAMU_CDS.csproj" />
+        <ProjectReference Include="..\PAMU_CDS\PAMU_CDS.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="TestFlows\Pure_CDS_ce.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="TestFlows\Pure_CDS_ce.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

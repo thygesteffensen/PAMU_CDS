@@ -9,6 +9,8 @@ namespace PAMU_CDS.Actions
 {
     public class DeleteRecordAction : OpenApiConnectionActionExecutorBase
     {
+        public const string OperationId = "CreateRecord";
+        
         private readonly IOrganizationService _organizationService;
 
         public DeleteRecordAction(IExpressionEngine expressionEngine, IOrganizationService organizationService) : base(
