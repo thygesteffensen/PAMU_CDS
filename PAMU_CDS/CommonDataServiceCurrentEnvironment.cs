@@ -11,6 +11,7 @@ using PAMU_CDS.Enums;
 using Parser;
 using Parser.ExpressionParser.Functions.Base;
 using Parser.FlowParser;
+using Parser.FlowParser.ActionExecutors.Implementations;
 
 namespace PAMU_CDS
 {
@@ -106,41 +107,30 @@ namespace PAMU_CDS
 
         private static ServiceCollection BuildServiceCollection(IOrganizationService organizationService)
         {
-            var apiId = "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps";
+            const string apiId = "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps";
 
             var services = new ServiceCollection();
             services.AddFlowRunner();
 
             services.AddSingleton(organizationService);
+            
             services.Configure<FlowSettings>(x => { });
 
-            services.AddFlowActionByName<UpdateRecordAction>("Update_a_record_-_Set_job_title_to_Technical_Supervisor");
+            services.AddFlowActionByApiIdAndOperationsName<CdsTrigger>(apiId, CdsTrigger.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<CdsTrigger>(apiId,
-                new[] {"SubscribeWebhookTrigger"});
+            services.AddFlowActionByApiIdAndOperationsName<CreateRecordAction>(apiId, CreateRecordAction.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<CreateRecordAction>(apiId,
-                new[] {CreateRecordAction.OperationId});
+            services.AddFlowActionByApiIdAndOperationsName<UpdateRecordAction>(apiId, UpdateRecordAction.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<UpdateRecordAction>(apiId,
-                new[] {UpdateRecordAction.OperationId});
+            services.AddFlowActionByApiIdAndOperationsName<DeleteRecordAction>(apiId, DeleteRecordAction.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<DeleteRecordAction>(apiId,
-                new[] {DeleteRecordAction.OperationId});
-
-            services.AddFlowActionByApiIdAndOperationsName<GetItemAction>(apiId,
-                new[] {GetItemAction.OperationId});
+            services.AddFlowActionByApiIdAndOperationsName<GetItemAction>(apiId, GetItemAction.OperationId);
 
             services.AddFlowActionByApiIdAndOperationsName<DisAndAssociateEntitiesAction>(apiId,
                 DisAndAssociateEntitiesAction.OperationId);
-            // services.AddFlowActionByFlowType<CreateRecordAction>("ExecuteChangeset");
-            // services.AddFlowActionByFlowType<CreateRecordAction>("ListRecords");
-            // // services.AddFlowActionByFlowType<>("PerformBoundAction");
-            // // services.AddFlowActionByFlowType<>("PerformUnboundAction");
-            // // services.AddFlowActionByFlowType<>("PredictV2");
-            // services.AddFlowActionByFlowType<CreateRecordAction>("AssociateEntities");
-            // services.AddFlowActionByFlowType<CreateRecordAction>("DisassociateEntities");
-            // // services.AddFlowActionByFlowType<>("UpdateEntityFileImageFieldContent");
+
+            services.AddFlowActionByApiIdAndOperationsName<ScopeActionExecutor>(apiId, new[] {"ExecuteChangeset"});
+            
 
             return services;
         }
