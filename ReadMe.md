@@ -1,6 +1,6 @@
 <h1 align="center">Common Data Service (current environment) mock</h1>
 <h2 align="center">Power Automate MockUp</h2>
-<h3 align="center">Battery included mock to mock Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a> as skeleton and <a href="http://github.com/delegateas/XrmMockup">XrmMockup as Dynamics Mock.</a>.</h3>
+<h3 align="center">Battery included mock to mock Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a> as skeleton and <a href="http://github.com/delegateas/XrmMockup">XrmMockup</a> as Dynamics Mock.</h3>
 <p align="center">
         <img alt="Build status" src="https://img.shields.io/github/workflow/status/thygesteffensen/PAMU_CDS/Build">
     <a href="https://www.nuget.org/packages/PAMU_CDSce/">
@@ -16,14 +16,9 @@
 
 This is a full featured mock for the [Common Date Service (current environment)](https://docs.microsoft.com/en-us/connectors/commondataserviceforapps/) connector for Power Automate.
 
-This is both a full featured mock and an example of how to use [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup),
-
-This mock i build using [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup) as the flow engine and [XrmMockup](https://github.com/delegateas/XrmMockup) to mock the underlying Dynamics 365.
+The mock is build using [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup) as the flow engine and [XrmMockup](https://github.com/delegateas/XrmMockup) to mock the underlying Dynamics 365.
 
 ## How to use
-
-### Introduction
-This is a fully featured mock for the CDS ce connector and it works OOB if you're already using [XrmMockup](https://github.com/delegateas/XrmMockup) to test your Dynamics 365 plugins. If not, you can still use this, but you will also need to set up [XrmMockup](https://github.com/delegateas/XrmMockup).
 
 ### Getting Started
 
@@ -59,7 +54,7 @@ The focus right now is create a MVP to use in my bachelor project, this meaning 
 ### General
 Every call against CDS returns a JSON object with headers and body. Headers will not be generated, as the MVP does not support the use cae.
 
-The Body will be almost as the real deal, but with minor deviations. They are described below.
+The body will almost be as the real deal, but with minor deviations. They are described below.
 
 #### Symbol meaning:
 
@@ -85,7 +80,7 @@ This is basically the saem as a scope. The `ScopeActionExecutor` is used, to moc
 
 ### Get a record ❗
 
-This action support 4 parameters
+This action supports 4 parameters
 1. Entity name - Table name
 2. Entity id - row id
 3. $select 
