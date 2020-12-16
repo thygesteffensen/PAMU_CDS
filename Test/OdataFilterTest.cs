@@ -26,7 +26,8 @@ namespace Test
         [TestMethod]
         public void TestAndCondition()
         {
-            var input = "fullname eq 'Hej' and firstname eq 'Hej'";
+            var input = "fullname eq 'Hej' and firstname eq 'Hej' or lastname ne 'Hej'";
+            // var input = "fullname eq 'Hej' and firstname eq 'Hej'";
             
             var parser = new OdataFilter();
 
