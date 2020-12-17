@@ -1,18 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
+﻿using Microsoft.Xrm.Sdk.Query;
 using Sprache;
 
 namespace PAMU_CDS.Auxiliary
 {
     public class OdataFilter
     {
-        Parser<ParsedFilter> cond1;
-
         private static readonly Parser<char> Except =
             Parse.Char('$').Or(
                 Parse.Char('=')).Or(
+                Parse.Char('\'')).Or(
                 Parse.Char('(')).Or(
                 Parse.Char(')')).Or(
                 Parse.Char(';')).Or(
@@ -52,47 +48,140 @@ namespace PAMU_CDS.Auxiliary
         private static readonly Parser<char> Quote = Parse.Char('\'');
         private static readonly Parser<char> OpenP = Parse.Char('(');
         private static readonly Parser<char> CloseP = Parse.Char(')');
-        
 
-        private static readonly Parser<Node> Stm =
-            from attr in SimpleString
-            from op in Operators.Contained(Space, Space)
-            from val in SimpleString.Contained(Quote, Quote)
-            select new Statement(attr, op, val);
-        
-        private static readonly Parser<Node> AndGroup =
+
+        private static readonly Parser<INode> Stm =
+            Parse.Ref(() => AndGroup).Contained(OpenP, CloseP)
+                .Or
+                (from attr in SimpleString
+                    from op in Operators.Contained(Space, Space)
+                    from val in SimpleString.Contained(Quote, Quote)
+                    select new Statement(attr, op, val));
+
+
+        private static readonly Parser<INode> AndGroup =
             from n in (
                 from stmt in Stm
                 from and in And.Or(Or).Contained(Space, Space)
                 from n1 in AndGroup // Watch out for this
-                select new Branch((Leaf) stmt, and, n1)
+                select new Branch(stmt, and, n1)
             ).Or(
                 from stmt in Stm
                 select stmt)
             select n;
 
+
+
         public FilterExpression OdataToFilterExpression(string input)
         {
-            var t = AndGroup.Parse(input);
+            switch (AndGroup.Parse(input))
+            {
+                case Leaf l:
+                    return new FilterExpression
+                    {
+                        FilterOperator = LogicalOperator.And,
+                        Conditions = {l.ToCondition()}
+                    };
+                case Branch b:
+                    return FilterExpression(b);
+                default:
+                    return null;
+            }
+        }
 
+        private static FilterExpression FilterExpression(Branch b)
+        {
+            var filter = new FilterExpression();
+            filter.FilterOperator = b.Operator;
 
-            return null;
+            switch (b.RightSide)
+            {
+                case Branch br when br.Operator == b.Operator:
+                    AddBranchToConditions(filter, br);
+                    break;
+                case Branch br:
+                    filter.Filters.Add(FilterExpression(br));
+                    break;
+                case Leaf lr:
+                    filter.Conditions.Add(lr.ToCondition());
+                    break;
+            }
+
+            switch (b.LeftSide)
+            {
+                case Branch bl when bl.Operator == b.Operator:
+                    AddBranchToConditions(filter, bl);
+                    break;
+                case Branch bl:
+                    filter.Filters.Add(FilterExpression(bl));
+                    break;
+                case Leaf ll:
+                    filter.Conditions.Add(ll.ToCondition());
+                    break;
+            }
+
+            return filter;
+        }
+
+        private static void AddBranchToConditions(FilterExpression filter, Branch b)
+        {
+            if (b.Operator == filter.FilterOperator)
+            {
+                switch (b.LeftSide)
+                {
+                    case Leaf ll:
+                        filter.Conditions.Add(ll.ToCondition());
+                        break;
+                    case Branch bl:
+                        AddBranchToConditions(filter, bl);
+                        break;
+                }
+
+                switch (b.LeftSide)
+                {
+                    case Leaf lr:
+                        filter.Conditions.Add(lr.ToCondition());
+                        break;
+                    case Branch br:
+                        AddBranchToConditions(filter, br);
+                        break;
+                }
+            }
+            else
+            {
+                filter.Filters.Add(FilterExpression(b));
+            }
         }
     }
 
-    public interface Node
+    public interface INode
     {
-    };
+    }
 
-    public abstract class Leaf : Node
+    public class Branch : INode
     {
+        public INode LeftSide { get; }
+        public LogicalOperator Operator { get; }
+        public INode RightSide { get; }
+
+        public Branch(INode leftSide, LogicalOperator op, INode rightSide)
+        {
+            LeftSide = leftSide;
+            Operator = op;
+            RightSide = rightSide;
+        }
+    }
+
+    public abstract class Leaf : INode
+    {
+        public abstract ConditionExpression ToCondition();
     }
 
     public class Statement : Leaf
     {
-        public string Attribute { get; private set; }
-        public ConditionOperator Op { get; private set; }
-        public string Value { get; private set; }
+        private string Attribute { get; }
+        private ConditionOperator Op { get; }
+        private string Value { get; }
 
         public Statement(string attribute, ConditionOperator op, string value)
         {
@@ -100,62 +189,10 @@ namespace PAMU_CDS.Auxiliary
             Op = op;
             Value = value;
         }
-    }
 
-    public class Branch : Node
-    {
-        public Leaf LeftSide { get; set; }
-        public LogicalOperator Operator { get; set; }
-        public Node RightSide { get; set; }
-
-        public Branch(Leaf leftSide, LogicalOperator op, Node rightSide)
+        public override ConditionExpression ToCondition()
         {
-            LeftSide = leftSide;
-            Operator = op;
-            RightSide = rightSide;
-        }
-
-        // public FilterExpression ToFilerExpression()
-        // {
-        // }
-    }
-
-    public class Constant : Node
-    {
-        private readonly string _s;
-
-        public Constant(string s)
-        {
-            _s = s;
-        }
-
-        public string Value()
-        {
-            return _s;
-        }
-    }
-
-    public class ParsedFilter
-    {
-        public ConditionExpression ConditionExpression { get; }
-        public IEnumerable<Additional> Additional { get; }
-
-        public ParsedFilter(ConditionExpression conditionExpression, IEnumerable<Additional> additional)
-        {
-            ConditionExpression = conditionExpression;
-            Additional = additional;
-        }
-    }
-
-    public class Additional
-    {
-        public LogicalOperator Op { get; }
-        public ConditionExpression ConditionExpression { get; }
-
-        public Additional(LogicalOperator op, ConditionExpression conditionExpression)
-        {
-            Op = op;
-            ConditionExpression = conditionExpression;
+            return new ConditionExpression(Attribute, Op, Value);
         }
     }
 }
