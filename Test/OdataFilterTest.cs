@@ -126,5 +126,50 @@ namespace Test
             Assert.AreEqual(ConditionOperator.Null, filterExpression.Conditions.First().Operator);
             Assert.AreEqual(0, filterExpression.Conditions.First().Values.Count);
         }
+        
+        [TestMethod]
+        public void TestStartsWithFunction()
+        {
+            var parser = new OdataFilter();
+
+            var filterExpression =
+                parser.OdataToFilterExpression("startswith(fullname, 'John')");
+
+            Assert.AreEqual(1, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("fullname", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual(ConditionOperator.BeginsWith, filterExpression.Conditions.First().Operator);
+            Assert.AreEqual("John", filterExpression.Conditions.First().Values.First());
+        }
+        
+        [TestMethod]
+        public void TestEndsWithFunction()
+        {
+            var parser = new OdataFilter();
+
+            var filterExpression =
+                parser.OdataToFilterExpression("endswith(fullname, 'Doe')");
+
+            Assert.AreEqual(1, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("fullname", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual(ConditionOperator.EndsWith, filterExpression.Conditions.First().Operator);
+            Assert.AreEqual("Doe", filterExpression.Conditions.First().Values.First());
+        }
+        
+        [TestMethod]
+        public void TestsubstringofFunction()
+        {
+            var parser = new OdataFilter();
+
+            var filterExpression =
+                parser.OdataToFilterExpression("substringof(fullname, 'Doe')");
+
+            Assert.AreEqual(1, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("fullname", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual(ConditionOperator.Contains, filterExpression.Conditions.First().Operator);
+            Assert.AreEqual("Doe", filterExpression.Conditions.First().Values.First());
+        }
     }
 }

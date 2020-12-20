@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xrm.Sdk.Query;
+using Parser.ExpressionParser.Functions.CustomException;
 using Sprache;
 
 namespace PAMU_CDS.Auxiliary
@@ -66,9 +67,18 @@ namespace PAMU_CDS.Auxiliary
         private static readonly Parser<char> OpenP = Parse.Char('(');
         private static readonly Parser<char> CloseP = Parse.Char(')');
 
+        private static readonly Parser<INode> Func =
+            from function in SimpleString.Token()
+            from op in OpenP.Token()
+            from attr in SimpleString.Token()
+            from comma in Parse.Char(',').Token()
+            from value in SimpleString.Contained(Quote, Quote).Token()
+            from cp in CloseP.Token()
+            select new Function(function, attr, value); 
 
         private static readonly Parser<INode> Stm =
             Parse.Ref(() => AndGroup).Contained(OpenP, CloseP)
+                .Or(Func)
                 .Or
                 (from attr in SimpleString
                     from op in Operators.Contained(Space, Space)
@@ -252,6 +262,30 @@ namespace PAMU_CDS.Auxiliary
             }
 
             return new ConditionExpression(Attribute, Op, Value);
+        }
+    }
+
+    public class Function : Leaf
+    {
+        private readonly string _function;
+        private readonly string _attribute;
+        private readonly string _value;
+
+        public Function(string function, string attribute, string value)
+        {
+            _function = function;
+            _attribute = attribute;
+            _value = value;
+        }
+        public override ConditionExpression ToCondition()
+        {
+            return _function switch
+            {
+                "startswith" => new ConditionExpression(_attribute, ConditionOperator.BeginsWith, _value),
+                "endswith" => new ConditionExpression(_attribute, ConditionOperator.EndsWith, _value),
+                "substringof" => new ConditionExpression(_attribute, ConditionOperator.Contains, _value),
+                _ => throw new NotImplementedException($"{_function} is not yet supported...")
+            };
         }
     }
 }
