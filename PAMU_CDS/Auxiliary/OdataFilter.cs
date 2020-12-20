@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xrm.Sdk.Query;
-using Parser.ExpressionParser.Functions.CustomException;
 using Sprache;
 
 namespace PAMU_CDS.Auxiliary
@@ -115,19 +114,12 @@ namespace PAMU_CDS.Auxiliary
 
         public FilterExpression OdataToFilterExpression(string input)
         {
-            switch (AndGroup.Parse(input))
+            return AndGroup.Parse(input) switch
             {
-                case Leaf l:
-                    return new FilterExpression
-                    {
-                        FilterOperator = LogicalOperator.And,
-                        Conditions = {l.ToCondition()}
-                    };
-                case Branch b:
-                    return FilterExpression(b);
-                default:
-                    return null;
-            }
+                Leaf l => new FilterExpression {FilterOperator = LogicalOperator.And, Conditions = {l.ToCondition()}},
+                Branch b => FilterExpression(b),
+                _ => null
+            };
         }
 
         private static FilterExpression FilterExpression(Branch b)

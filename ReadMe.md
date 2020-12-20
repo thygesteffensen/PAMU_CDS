@@ -115,8 +115,50 @@ $expand=something($select=prop1,prop2),something2($select=prop1,prop2;$orderby=p
 ### Get file or image content ❌
 Action is not implemented and will not be implemented in the near future.
 
-### List records ❌
-Actions is not yet implemented, but it will be soon.
+### List records ❗
+Currently the list records in converted to a QueryExpression, but it should be converted to a FetchXML instead, since FetchXML cover more of the features of Odata than QueryExpression.
+
+|   | **Name**        | **Key**    | **Required** | **Type** | **Description**                                                                                                |
+|---|-----------------|------------|--------------|----------|----------------------------------------------------------------------------------------------------------------|
+| ✔ | Entity name     | entityName | True         | string   | Choose an option or add your own                                                                               |
+| ✔ | Select Query    | $select    |              | string   | Limit the properties returned while retrieving data.                                                           |
+| ❗ | Filter Query    | $filter    |              | string   | An ODATA filter query to restrict the entries returned (e.g. stringColumn eq 'string' OR numberColumn lt 123). |
+| ❗ | Order By        | $orderby   |              | string   | An ODATA orderBy query for specifying the order of entries.                                                    |
+| ❌ | Expand Query    | $expand    |              | string   | Related entries to include with requested entries (default = none).                                            |
+| ✔ | Fetch Xml Query | fetchXml   |              | string   | Fetch Xml query                                                                                                |
+| ✔ | Top Count       | $top       |              | integer  | Total number of entries to retrieve (default = all).                                                           |
+| ❗ | Skip token      | $skiptoken |              | string   | The skip token.                                                                                                |
+
+Skip token, as well as Odata.nextLink on response will not be implemented.
+
+Fetch Xml Expression will simple be a `FetchExpression` instead of a QueryExpression. The correctness of `FetchExpression` will depend on XrmMockup.
+
+
+#### Filter Query
+The filter query is made in OData in Power Automate. I have written a small Odata parser, which parses the Odata query to a FilterExpression, but not to a full extend.
+
+Every Condition Operator, i.e. eq, ne, lt, is supported for strings, integers, decimals, booleans and null.
+The functions Startswith, Endswith and substringof is supported, the others are not supported, as they cannot be easily mapped to a FilterExpression. 
+
+The CFG in EBNF for the parser is:
+```xml
+or ::= and ('or' or)+
+and ::= stm ('and' and)+
+stm ::= func | '(' or ')' | attr op val
+val ::= func | const
+op ::= eq ne ...
+attr ::= string
+func ::= string '(' params ')'
+```
+
+#### Order By
+Order By is not working as in Power Automate, simply because the QueryExpression does not support ordering of linked entities. 
+
+#### Expand Query
+Is not supported at the moment.
+
+#### Skip token
+Not supported.
 
 ### Perform a bound action ❌
 XrmMockup does not support [actions](https://docs.microsoft.com/en-us/dynamics365/customerengagement/on-premises/customize/actions). If you want support check [support custom action plugins #65](https://github.com/delegateas/XrmMockup/issues/65).
