@@ -60,6 +60,7 @@ namespace Test
             Assert.AreEqual(1, filterExpression.Conditions.Count);
             Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
             Assert.AreEqual("City", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual("Redmond", filterExpression.Conditions.First().Values.First());
 
             Assert.AreEqual(1, filterExpression.Filters.Count);
             var innerFilter = filterExpression.Filters.First();
@@ -67,6 +68,63 @@ namespace Test
             Assert.AreEqual(LogicalOperator.Or, innerFilter.FilterOperator);
             Assert.AreEqual("FirstName", innerFilter.Conditions.First().AttributeName);
             Assert.AreEqual("FirstName", innerFilter.Conditions.Last().AttributeName);
+        }
+
+        [TestMethod]
+        public void TestIntegerValues()
+        {
+            var parser = new OdataFilter();
+
+            var filterExpression =
+                parser.OdataToFilterExpression("age eq 32");
+
+            Assert.AreEqual(1, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("age", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual(32, filterExpression.Conditions.First().Values.First());
+        }
+        
+        [TestMethod]
+        public void TestDecimalValues()
+        {
+            var parser = new OdataFilter();
+
+            var filterExpression =
+                parser.OdataToFilterExpression("height eq 1.88");
+
+            Assert.AreEqual(1, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("height", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual(1.88m, filterExpression.Conditions.First().Values.First());
+        }
+        
+        [TestMethod]
+        public void TestBoolValues()
+        {
+            var parser = new OdataFilter();
+
+            var filterExpression =
+                parser.OdataToFilterExpression("enrolled eq true");
+
+            Assert.AreEqual(1, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("enrolled", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual(true, filterExpression.Conditions.First().Values.First());
+        }
+        
+        [TestMethod]
+        public void TestNullValues()
+        {
+            var parser = new OdataFilter();
+
+            var filterExpression =
+                parser.OdataToFilterExpression("degree eq null");
+
+            Assert.AreEqual(1, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("degree", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual(ConditionOperator.Null, filterExpression.Conditions.First().Operator);
+            Assert.AreEqual(0, filterExpression.Conditions.First().Values.Count);
         }
     }
 }

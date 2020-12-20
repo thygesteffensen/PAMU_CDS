@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk.Query;
+﻿using System;
+using Microsoft.Xrm.Sdk.Query;
 using Sprache;
 
 namespace PAMU_CDS.Auxiliary
@@ -18,6 +19,22 @@ namespace PAMU_CDS.Auxiliary
 
         private static readonly Parser<string> SimpleString =
             Parse.AnyChar.Except(Except).AtLeastOnce().Text().Select(x => x);
+
+        private static readonly Parser<decimal> Decimal =
+            (
+                from n in Parse.Number
+                from di in Parse.Char(',').Or(Parse.Char('.'))
+                from dec in Parse.Number
+                select decimal.Parse($"{n},{dec}"))
+            .Or(
+                Parse.Number.Select(decimal.Parse));
+
+        private static readonly Parser<bool> Bool =
+            Parse.String("true").Select(x => true)
+                .Or(Parse.String("false").Select(x => false));
+
+        private static readonly Parser<object> Null =
+            Parse.String("null").Select(x => (object) null);
 
         private static readonly Parser<ConditionOperator> Equal = Parse.String("eq").Return(ConditionOperator.Equal);
 
@@ -55,21 +72,35 @@ namespace PAMU_CDS.Auxiliary
                 .Or
                 (from attr in SimpleString
                     from op in Operators.Contained(Space, Space)
+                    from val in Null
+                    select new Statement(attr, op, null))
+                .Or
+                (from attr in SimpleString
+                    from op in Operators.Contained(Space, Space)
                     from val in SimpleString.Contained(Quote, Quote)
+                    select new Statement(attr, op, val))
+                .Or
+                (from attr in SimpleString
+                    from op in Operators.Contained(Space, Space)
+                    from val in Bool
+                    select new Statement(attr, op, val))
+                .Or
+                (from attr in SimpleString
+                    from op in Operators.Contained(Space, Space)
+                    from val in Decimal
                     select new Statement(attr, op, val));
 
 
         private static readonly Parser<INode> AndGroup =
             from n in (
                 from stmt in Stm
-                from and in And.Or(Or).Contained(Space, Space)
+                from and in LOperators.Contained(Space, Space)
                 from n1 in AndGroup // Watch out for this
                 select new Branch(stmt, and, n1)
             ).Or(
                 from stmt in Stm
                 select stmt)
             select n;
-
 
 
         public FilterExpression OdataToFilterExpression(string input)
@@ -91,8 +122,7 @@ namespace PAMU_CDS.Auxiliary
 
         private static FilterExpression FilterExpression(Branch b)
         {
-            var filter = new FilterExpression();
-            filter.FilterOperator = b.Operator;
+            var filter = new FilterExpression {FilterOperator = b.Operator};
 
             switch (b.RightSide)
             {
@@ -181,7 +211,7 @@ namespace PAMU_CDS.Auxiliary
     {
         private string Attribute { get; }
         private ConditionOperator Op { get; }
-        private string Value { get; }
+        private dynamic Value { get; }
 
         public Statement(string attribute, ConditionOperator op, string value)
         {
@@ -190,8 +220,37 @@ namespace PAMU_CDS.Auxiliary
             Value = value;
         }
 
+        public Statement(string attribute, ConditionOperator op, bool value)
+        {
+            Attribute = attribute;
+            Op = op;
+            Value = value;
+        }
+
+        public Statement(string attribute, ConditionOperator op, decimal value)
+        {
+            Attribute = attribute;
+            Op = op;
+
+            if (value % 1 == 0)
+            {
+                Value = (int) value;
+            }
+            else
+            {
+                Value = value;
+            }
+        }
+
         public override ConditionExpression ToCondition()
         {
+            if (Value == null)
+            {
+                return new ConditionExpression(Attribute, Op == ConditionOperator.Equal
+                    ? ConditionOperator.Null
+                    : ConditionOperator.NotNull);
+            }
+
             return new ConditionExpression(Attribute, Op, Value);
         }
     }
