@@ -133,7 +133,6 @@ namespace PAMU_CDS.Actions
             var t = new RelationshipQueryCollection();
 
             var p = new OdataParser();
-            // TODO: Refactor with version alpha.18
             var expand = p.Get(Parameters["$expand"].GetValue<string>());
 
 

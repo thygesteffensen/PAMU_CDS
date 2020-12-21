@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -121,11 +119,11 @@ namespace Test.UnitTest
                 "\"inputs\":" +
                 "{\"host\":{\"connectionName\":\"shared_commondataserviceforapps\",\"operationId\":\"ListRecords\",\"apiId\":\"/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps\"},"
                 +
-                $"\"parameters\":{{\"entityName\":\"contacts\"," +
-                "\"$select\":\"fullname,firstname,lastname\"" +
-                "\"$filter\":\"age lt 25 and age gt 15\"" +
-                "\"$orderby\":\"age desc\"" +
-                "\"$topcount\":\"25\"" +
+                "\"parameters\":{\"entityName\":\"contacts\"," +
+                "\"$select\":\"fullname,firstname,lastname\"," +
+                "\"$filter\":\"age lt 25 and age gt 15\"," +
+                "\"$orderby\":\"age desc\"," +
+                "\"$top\":\"25\"" +
                 "}," +
                 "\"authentication\":\"@parameters('$authentication')\"}}";
             createActionExecutor.InitializeActionExecutor("GetContacts", JToken.Parse(actionDescription));
