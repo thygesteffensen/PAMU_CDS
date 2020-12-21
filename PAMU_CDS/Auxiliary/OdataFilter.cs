@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.Xrm.Sdk.Query;
 using Sprache;
 
@@ -25,7 +26,7 @@ namespace PAMU_CDS.Auxiliary
                 from n in Parse.Number
                 from di in Parse.Char(',').Or(Parse.Char('.'))
                 from dec in Parse.Number
-                select decimal.Parse($"{n},{dec}"))
+                select decimal.Parse($"{n}.{dec}", CultureInfo.InvariantCulture))
             .Or(
                 Parse.Number.Select(decimal.Parse));
 
