@@ -125,6 +125,8 @@ namespace PAMU_CDS
             services.AddFlowActionByApiIdAndOperationsName<DeleteRecordAction>(apiId, DeleteRecordAction.OperationId);
 
             services.AddFlowActionByApiIdAndOperationsName<GetItemAction>(apiId, GetItemAction.OperationId);
+            
+            services.AddFlowActionByApiIdAndOperationsName<ListRecordsAction>(apiId, ListRecordsAction.OperationId);
 
             services.AddFlowActionByApiIdAndOperationsName<DisAndAssociateEntitiesAction>(apiId,
                 DisAndAssociateEntitiesAction.OperationId);

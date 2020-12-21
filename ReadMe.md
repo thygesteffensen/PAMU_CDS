@@ -1,6 +1,6 @@
 <h1 align="center">Common Data Service (current environment) mock</h1>
 <h2 align="center">Power Automate MockUp</h2>
-<h3 align="center">Battery included mock to mock Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a> as skeleton and <a href="http://github.com/delegateas/XrmMockup">XrmMockup as Dynamics Mock.</a>.</h3>
+<h3 align="center">Battery included mock to mock Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a> as skeleton and <a href="http://github.com/delegateas/XrmMockup">XrmMockup</a> as Dynamics Mock.</h3>
 <p align="center">
         <img alt="Build status" src="https://img.shields.io/github/workflow/status/thygesteffensen/PAMU_CDS/Build">
     <a href="https://www.nuget.org/packages/PAMU_CDSce/">
@@ -16,14 +16,9 @@
 
 This is a full featured mock for the [Common Date Service (current environment)](https://docs.microsoft.com/en-us/connectors/commondataserviceforapps/) connector for Power Automate.
 
-This is both a full featured mock and an example of how to use [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup),
-
-This mock i build using [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup) as the flow engine and [XrmMockup](https://github.com/delegateas/XrmMockup) to mock the underlying Dynamics 365.
+The mock is build using [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup) as the flow engine and [XrmMockup](https://github.com/delegateas/XrmMockup) to mock the underlying Dynamics 365.
 
 ## How to use
-
-### Introduction
-This is a fully featured mock for the CDS ce connector and it works OOB if you're already using [XrmMockup](https://github.com/delegateas/XrmMockup) to test your Dynamics 365 plugins. If not, you can still use this, but you will also need to set up [XrmMockup](https://github.com/delegateas/XrmMockup).
 
 ### Getting Started
 
@@ -59,7 +54,7 @@ The focus right now is create a MVP to use in my bachelor project, this meaning 
 ### General
 Every call against CDS returns a JSON object with headers and body. Headers will not be generated, as the MVP does not support the use cae.
 
-The Body will be almost as the real deal, but with minor deviations. They are described below.
+The body will almost be as the real deal, but with minor deviations. They are described below.
 
 #### Symbol meaning:
 
@@ -85,7 +80,7 @@ This is basically the saem as a scope. The `ScopeActionExecutor` is used, to moc
 
 ### Get a record ❗
 
-This action support 4 parameters
+This action supports 4 parameters
 1. Entity name - Table name
 2. Entity id - row id
 3. $select 
@@ -120,8 +115,50 @@ $expand=something($select=prop1,prop2),something2($select=prop1,prop2;$orderby=p
 ### Get file or image content ❌
 Action is not implemented and will not be implemented in the near future.
 
-### List records ❌
-Actions is not yet implemented, but it will be soon.
+### List records ❗
+Currently the list records in converted to a QueryExpression, but it should be converted to a FetchXML instead, since FetchXML cover more of the features of Odata than QueryExpression.
+
+|   | **Name**        | **Key**    | **Required** | **Type** | **Description**                                                                                                |
+|---|-----------------|------------|--------------|----------|----------------------------------------------------------------------------------------------------------------|
+| ✔ | Entity name     | entityName | True         | string   | Choose an option or add your own                                                                               |
+| ✔ | Select Query    | $select    |              | string   | Limit the properties returned while retrieving data.                                                           |
+| ❗ | Filter Query    | $filter    |              | string   | An ODATA filter query to restrict the entries returned (e.g. stringColumn eq 'string' OR numberColumn lt 123). |
+| ❗ | Order By        | $orderby   |              | string   | An ODATA orderBy query for specifying the order of entries.                                                    |
+| ❌ | Expand Query    | $expand    |              | string   | Related entries to include with requested entries (default = none).                                            |
+| ✔ | Fetch Xml Query | fetchXml   |              | string   | Fetch Xml query                                                                                                |
+| ✔ | Top Count       | $top       |              | integer  | Total number of entries to retrieve (default = all).                                                           |
+| ❗ | Skip token      | $skiptoken |              | string   | The skip token.                                                                                                |
+
+Skip token, as well as Odata.nextLink on response will not be implemented.
+
+Fetch Xml Expression will simple be a `FetchExpression` instead of a QueryExpression. The correctness of `FetchExpression` will depend on XrmMockup.
+
+
+#### Filter Query
+The filter query is made in OData in Power Automate. I have written a small Odata parser, which parses the Odata query to a FilterExpression, but not to a full extend.
+
+Every Condition Operator, i.e. eq, ne, lt, is supported for strings, integers, decimals, booleans and null.
+The functions Startswith, Endswith and substringof is supported, the others are not supported, as they cannot be easily mapped to a FilterExpression. 
+
+The CFG in EBNF for the parser is:
+```xml
+or ::= and ('or' or)+
+and ::= stm ('and' and)+
+stm ::= func | '(' or ')' | attr op val
+val ::= func | const
+op ::= eq ne ...
+attr ::= string
+func ::= string '(' params ')'
+```
+
+#### Order By
+Order By is not working as in Power Automate, simply because the QueryExpression does not support ordering of linked entities. 
+
+#### Expand Query
+Is not supported at the moment.
+
+#### Skip token
+Not supported.
 
 ### Perform a bound action ❌
 XrmMockup does not support [actions](https://docs.microsoft.com/en-us/dynamics365/customerengagement/on-premises/customize/actions). If you want support check [support custom action plugins #65](https://github.com/delegateas/XrmMockup/issues/65).
