@@ -146,7 +146,7 @@ namespace Test.UnitTest
 
             Assert.AreEqual(25, query.TopCount);
 
-            Assert.AreEqual("fullname", query.Orders.First().AttributeName);
+            Assert.AreEqual("age", query.Orders.First().AttributeName);
             Assert.AreEqual(OrderType.Descending, query.Orders.First().OrderType);
 
             Assert.IsNotNull(query.Criteria);
