@@ -1,0 +1,66 @@
+{
+  "name": "803e7e0d-a6a8-449d-8205-25d3e4e79377",
+  "id": "/providers/Microsoft.Flow/flows/803e7e0d-a6a8-449d-8205-25d3e4e79377",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "When a condition is met, post a notification",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "WhenSomethingHappens": {
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "non_existing_provider",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/NonExistingProvider"
+            },
+            "parameters": {
+              "subscriptionRequest/broadcast": true
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Post_a_notification_using_non_existing_provider": {
+          "runAfter": {},
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "non_existing_provider",
+              "operationId": "PostNotification",
+              "apiId": "/providers/NonExistingProvider"
+            },
+            "parameters": {
+              "title": "This is the title!",
+              "message": "This is the message, which is \nmulti\nline!"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "source": "Embedded",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+        "tier": "NotSpecified"
+      }
+    },
+    "flowFailureAlertSubscribed": false
+  }
+}

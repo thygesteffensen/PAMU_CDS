@@ -28,6 +28,12 @@
         <None Update="TestFlows\Pure_CDS_ce.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="TestFlows\Single_Custom_Action.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestFlows\Single_Custom_ActionNonCdsTrigger.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>
