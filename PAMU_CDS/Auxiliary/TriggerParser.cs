@@ -8,11 +8,16 @@ namespace PAMU_CDS.Auxiliary
 {
     public static class TriggerParser
     {
-        public static List<TriggerSkeleton> AddTo(this List<TriggerSkeleton> list, string flowDefinitionPath)
+        public static void AddTo(this List<TriggerSkeleton> list, string flowDefinitionPath)
         {
             var flowJson = JToken.Parse(File.ReadAllText(flowDefinitionPath));
 
             var triggerJson = flowJson.SelectToken("$..triggers");
+            if (triggerJson == null ||
+                triggerJson.SelectToken("$..apiId")?.Value<string>() !=
+                "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps")
+                return;
+
             var trigger = new TriggerSkeleton
             {
                 TriggerCondition =
@@ -25,10 +30,7 @@ namespace PAMU_CDS.Auxiliary
                 RunAs = ToRunAs(triggerJson.SelectToken("$..subscriptionRequest/runas")),
                 FlowDescription = new Uri(flowDefinitionPath),
             };
-            
             list.Add(trigger);
-
-            return list;
         }
 
         private static RunAs ToRunAs(JToken selectToken)

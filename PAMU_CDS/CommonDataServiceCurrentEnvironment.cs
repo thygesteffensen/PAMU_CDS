@@ -18,6 +18,7 @@ namespace PAMU_CDS
     public class CommonDataServiceCurrentEnvironment : IMockUpExtension
     {
         private readonly List<TriggerSkeleton> _triggers;
+        public ServiceCollection Services { get; }
 
         public CommonDataServiceCurrentEnvironment(Uri flowFolderPath)
         {
@@ -29,6 +30,8 @@ namespace PAMU_CDS
             {
                 _triggers.AddTo(file);
             }
+
+            Services = new ServiceCollection();
         }
 
         public void TriggerExtension(
@@ -44,6 +47,7 @@ namespace PAMU_CDS
 
             var flows = ApplyCriteria(request);
 
+            // TODO: Figure out if this is the real place to put it.
             var sp = BuildServiceCollection(organizationService).BuildServiceProvider();
 
             // var flowRunner = sp.GetRequiredService<FlowRunner>();
@@ -105,36 +109,34 @@ namespace PAMU_CDS
             return flows;
         }
 
-        private static ServiceCollection BuildServiceCollection(IOrganizationService organizationService)
+        private ServiceCollection BuildServiceCollection(IOrganizationService organizationService)
         {
             const string apiId = "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps";
 
-            var services = new ServiceCollection();
-            services.AddFlowRunner();
+            Services.AddFlowRunner();
 
-            services.AddSingleton(organizationService);
-            
-            services.Configure<FlowSettings>(x => { });
+            Services.AddSingleton(organizationService);
 
-            services.AddFlowActionByApiIdAndOperationsName<CdsTrigger>(apiId, CdsTrigger.OperationId);
+            Services.Configure<FlowSettings>(x => { });
 
-            services.AddFlowActionByApiIdAndOperationsName<CreateRecordAction>(apiId, CreateRecordAction.OperationId);
+            Services.AddFlowActionByApiIdAndOperationsName<CdsTrigger>(apiId, CdsTrigger.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<UpdateRecordAction>(apiId, UpdateRecordAction.OperationId);
+            Services.AddFlowActionByApiIdAndOperationsName<CreateRecordAction>(apiId, CreateRecordAction.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<DeleteRecordAction>(apiId, DeleteRecordAction.OperationId);
+            Services.AddFlowActionByApiIdAndOperationsName<UpdateRecordAction>(apiId, UpdateRecordAction.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<GetItemAction>(apiId, GetItemAction.OperationId);
-            
-            services.AddFlowActionByApiIdAndOperationsName<ListRecordsAction>(apiId, ListRecordsAction.OperationId);
+            Services.AddFlowActionByApiIdAndOperationsName<DeleteRecordAction>(apiId, DeleteRecordAction.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<DisAndAssociateEntitiesAction>(apiId,
+            Services.AddFlowActionByApiIdAndOperationsName<GetItemAction>(apiId, GetItemAction.OperationId);
+
+            Services.AddFlowActionByApiIdAndOperationsName<ListRecordsAction>(apiId, ListRecordsAction.OperationId);
+
+            Services.AddFlowActionByApiIdAndOperationsName<DisAndAssociateEntitiesAction>(apiId,
                 DisAndAssociateEntitiesAction.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<ScopeActionExecutor>(apiId, new[] {"ExecuteChangeset"});
-            
+            Services.AddFlowActionByApiIdAndOperationsName<ScopeActionExecutor>(apiId, new[] {"ExecuteChangeset"});
 
-            return services;
+            return Services;
         }
     }
 }
