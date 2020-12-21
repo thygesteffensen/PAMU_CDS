@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace Test
@@ -12,9 +13,9 @@ namespace Test
         {
             // Black box test
             var contact = new Entity("contact");
-            
+
             contact.Id = OrgAdminService.Create(contact);
-            
+
             var retrievedContact = OrgAdminService.Retrieve(contact.LogicalName, contact.Id, new ColumnSet("jobtitle"));
 
             Assert.IsNotNull(retrievedContact);
