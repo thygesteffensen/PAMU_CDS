@@ -6,6 +6,7 @@ using IXrmMockupExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
 using PAMU_CDS;
+using Parser.ExpressionParser.Functions.Base;
 
 namespace Test
 {
@@ -38,8 +39,8 @@ namespace Test
         public static void InitializeServices(TestContext context)
         {
             _pamuCds = new CommonDataServiceCurrentEnvironment(new Uri(TestFlowPath));
-
-            // Figure out how to get all json
+            
+            _pamuCds.Services.AddFlowActionByName<ManualActionExecutor>("Post_a_notification_using_non_existing_provider");
 
             InitializeMockup(context);
         }
