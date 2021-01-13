@@ -33,7 +33,7 @@ namespace PAMU_CDS.Actions
 
             try
             {
-                var request = new UpsertRequest()
+                var request = new UpdateRequest
                 {
                     Target = entity
                 };
