@@ -19,7 +19,6 @@ namespace PAMU_CDS
     {
         private readonly List<TriggerSkeleton> _triggers;
         public ServiceCollection Services { get; }
-        readonly RecursionChecker _recursionChecker;
 
         
         public CommonDataServiceCurrentEnvironment(Uri flowFolderPath)
@@ -34,8 +33,6 @@ namespace PAMU_CDS
             }
 
             Services = new ServiceCollection();
-            
-            _recursionChecker = new RecursionChecker();
         }
 
         public void TriggerExtension(
@@ -51,14 +48,7 @@ namespace PAMU_CDS
 
             var flows = ApplyCriteria(request);
             
-            var temp = new PamuCdsOrganizationService(organizationService, _recursionChecker);
-
-            if (_recursionChecker.IsRecursiveCall(currentEntity.Id, request.RequestName.ToLower()))
-            {
-                throw new PowerAutomateException("Recursive call detected.");
-            }
-
-            var sp = BuildServiceCollection(temp).BuildServiceProvider();
+            var sp = BuildServiceCollection(organizationService).BuildServiceProvider();
 
             // var flowRunner = sp.GetRequiredService<FlowRunner>();
 
