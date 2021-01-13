@@ -28,7 +28,8 @@ namespace Test.UnitTest
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
-
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
+            
             var associateActionExecutor =
                 new DisAndAssociateEntitiesAction(expressionEngineMock.Object, orgServiceMock.Object);
 
@@ -71,7 +72,8 @@ namespace Test.UnitTest
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
-
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
+            
             var associateActionExecutor =
                 new DisAndAssociateEntitiesAction(expressionEngineMock.Object, orgServiceMock.Object);
 

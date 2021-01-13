@@ -43,7 +43,8 @@ namespace Test.UnitTest
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
-
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
+            
             var stateMock = new Mock<IState>();
             stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
                 .Callback<string, ValueContainer>((actionName, valueContainer) =>
@@ -103,6 +104,7 @@ namespace Test.UnitTest
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input, true));
 
             var stateMock = new Mock<IState>();
             stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
@@ -111,7 +113,7 @@ namespace Test.UnitTest
                     outputValueContainer = valueContainer;
                 });
 
-            var createActionExecutor =
+            var listRecordsActionExecutor =
                 new ListRecordsAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object,
                     loggerMock.Object);
             var actionDescription =
@@ -126,9 +128,9 @@ namespace Test.UnitTest
                 "\"$top\":\"25\"" +
                 "}," +
                 "\"authentication\":\"@parameters('$authentication')\"}}";
-            createActionExecutor.InitializeActionExecutor("GetContacts", JToken.Parse(actionDescription));
+            listRecordsActionExecutor.InitializeActionExecutor("GetContacts", JToken.Parse(actionDescription));
 
-            var response = await createActionExecutor.Execute();
+            var response = await listRecordsActionExecutor.Execute();
 
             orgServiceMock.Verify(x => x.Execute(It.IsAny<RetrieveMultipleRequest>()));
 

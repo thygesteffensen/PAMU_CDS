@@ -32,7 +32,8 @@ namespace Test.UnitTest
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
             expressionEngineMock.Setup(x => x.Parse("@triggerOutputs()?['body/contactid']")).Returns(guid.ToString());
-
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
+            
             var deleteActionExecutor =
                 new DeleteRecordAction(expressionEngineMock.Object, orgServiceMock.Object);
 
