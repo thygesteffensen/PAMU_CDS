@@ -48,9 +48,11 @@ namespace PAMU_CDS.Actions
 
                 AddResponseToOutput(response.EntityCollection);
             }
-            catch (InvalidPluginExecutionException)
+            catch (InvalidPluginExecutionException exp)
             {
-                return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Failed});
+                // We need to do some experiments on how the error handling works. Take a look at one of your customers.
+                return Task.FromResult(new ActionResult
+                    {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
             catch (Exception exp) // MockupException
             {
@@ -61,6 +63,8 @@ namespace PAMU_CDS.Actions
                         $"0x0 | Could not find a property named '{messageDivided[1]}' on type 'Microsoft.Dynamics.CRM.{messageDivided[3]}'",
                         exp);
                 }
+                return Task.FromResult(new ActionResult
+                    {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
 
             return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});

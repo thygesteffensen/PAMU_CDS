@@ -28,10 +28,11 @@ namespace PAMU_CDS.Actions
             {
                 _organizationService.Delete(entity.LogicalName, entity.Id);
             }
-            catch (InvalidPluginExecutionException)
+            catch (InvalidPluginExecutionException exp)
             {
                 // We need to do some experiments on how the error handling works. Take a look at one of your customers.
-                return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Failed});
+                return Task.FromResult(new ActionResult
+                    {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
 
             return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});

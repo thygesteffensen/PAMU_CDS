@@ -6,7 +6,7 @@ using IXrmMockupExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
 using PAMU_CDS;
-using Parser.ExpressionParser.Functions.Base;
+using Parser;
 
 namespace Test
 {

@@ -17,7 +17,7 @@ namespace PAMU_CDS.Actions
         private readonly IState _state;
 
         public CreateRecordAction(
-            IExpressionEngine expressionEngine, 
+            IExpressionEngine expressionEngine,
             IOrganizationService organizationService,
             IState state) : base(
             expressionEngine)
@@ -28,21 +28,21 @@ namespace PAMU_CDS.Actions
 
         public override Task<ActionResult> Execute()
         {
-
             var entity = new Entity();
             entity = entity.CreateEntityFromParameters(Parameters);
 
             try
             {
                 entity.Id = _organizationService.Create(entity);
-                
+
                 var retrievedEntity = _organizationService.Retrieve(entity.LogicalName, entity.Id, new ColumnSet(true));
                 _state.AddOutputs(ActionName, retrievedEntity.ToValueContainer());
             }
-            catch (InvalidPluginExecutionException)
+            catch (InvalidPluginExecutionException exp)
             {
                 // We need to do some experiments on how the error handling works. Take a look at one of your customers.
-                return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Failed});
+                return Task.FromResult(new ActionResult
+                    {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
 
             return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});
