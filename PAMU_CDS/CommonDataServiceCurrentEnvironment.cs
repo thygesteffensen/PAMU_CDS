@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using IXrmMockupExtension;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
@@ -41,6 +42,16 @@ namespace PAMU_CDS
             Entity currentEntity,
             EntityReference userRef)
         {
+            var triggerObject = TriggerExtensionAsync(organizationService, request, currentEntity, userRef);
+            triggerObject.Wait();
+        }
+
+        public async Task TriggerExtensionAsync(
+            IOrganizationService organizationService,
+            OrganizationRequest request,
+            Entity currentEntity,
+            EntityReference userRef)
+        {
             if (!new[] {"Create", "Delete", "Update"}.Contains(request.RequestName))
             {
                 throw new InvalidOperationException("PAMU_CDS does not support the request.");
@@ -62,7 +73,7 @@ namespace PAMU_CDS
 
                 var flowRunner = sp.GetRequiredService<FlowRunner>();
                 flowRunner.InitializeFlowRunner(triggerSkeleton.FlowDescription.AbsolutePath);
-                flowRunner.Trigger();
+                await flowRunner.Trigger();
             }
         }
 
