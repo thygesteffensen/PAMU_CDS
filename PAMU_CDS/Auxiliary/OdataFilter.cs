@@ -74,7 +74,7 @@ namespace PAMU_CDS.Auxiliary
             from comma in Parse.Char(',').Token()
             from value in SimpleString.Contained(Quote, Quote).Token()
             from cp in CloseP.Token()
-            select new Function(function, attr, value); 
+            select new Function(function, attr, value);
 
         private static readonly Parser<INode> Stm =
             Parse.Ref(() => AndGroup).Contained(OpenP, CloseP)
@@ -270,6 +270,7 @@ namespace PAMU_CDS.Auxiliary
             _attribute = attribute;
             _value = value;
         }
+
         public override ConditionExpression ToCondition()
         {
             return _function switch

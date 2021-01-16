@@ -10,6 +10,7 @@ using PAMU_CDS.Actions;
 using PAMU_CDS.Auxiliary;
 using PAMU_CDS.Enums;
 using Parser;
+using Parser.ExpressionParser.Functions.Base;
 using Parser.FlowParser;
 using Parser.FlowParser.ActionExecutors.Implementations;
 
@@ -20,7 +21,7 @@ namespace PAMU_CDS
         private readonly List<TriggerSkeleton> _triggers;
         public ServiceCollection Services { get; }
 
-        
+
         public CommonDataServiceCurrentEnvironment(Uri flowFolderPath)
         {
             var files = Directory.GetFiles(flowFolderPath.AbsolutePath);
@@ -39,9 +40,10 @@ namespace PAMU_CDS
             IOrganizationService organizationService,
             OrganizationRequest request,
             Entity currentEntity,
+            Entity preEntity,
             EntityReference userRef)
         {
-            var triggerObject = TriggerExtensionAsync(organizationService, request, currentEntity, userRef);
+            var triggerObject = TriggerExtensionAsync(organizationService, request, currentEntity, preEntity, userRef);
             triggerObject.Wait();
         }
 
@@ -49,6 +51,7 @@ namespace PAMU_CDS
             IOrganizationService organizationService,
             OrganizationRequest request,
             Entity currentEntity,
+            Entity preEntity,
             EntityReference userRef)
         {
             if (!new[] {"Create", "Delete", "Update"}.Contains(request.RequestName))
@@ -56,8 +59,8 @@ namespace PAMU_CDS
                 throw new InvalidOperationException("PAMU_CDS does not support the request.");
             }
 
-            var flows = ApplyCriteria(request);
-            
+            var flows = ApplyCriteria(request, preEntity ?? currentEntity);
+
             var sp = BuildServiceCollection(organizationService).BuildServiceProvider();
 
             // var flowRunner = sp.GetRequiredService<FlowRunner>();
@@ -76,7 +79,7 @@ namespace PAMU_CDS
             }
         }
 
-        private IEnumerable<TriggerSkeleton> ApplyCriteria(OrganizationRequest request)
+        private IEnumerable<TriggerSkeleton> ApplyCriteria(OrganizationRequest request, Entity entity)
         {
             IEnumerable<TriggerSkeleton> flows;
             if (request.RequestName == "Delete")
@@ -116,7 +119,17 @@ namespace PAMU_CDS
                     x.GetTriggeringAttributes.Any(y => target.Attributes.Keys.Contains(y)));
             }
 
+            var t = new OdataFilter();
+            flows = flows.Where(x => FulfillFilterExpression(x.FilterExpression, entity, t));
+
             return flows;
+        }
+
+        private bool FulfillFilterExpression(string filterExpression, Entity entity, OdataFilter odataFilter)
+        {
+            if (filterExpression == null) return true;
+            var filterExpresion = odataFilter.OdataToFilterExpression(filterExpression);
+            return ApplyFilterExpression.ApplyFilterExpressionToEntity(entity, filterExpresion);
         }
 
         private ServiceCollection BuildServiceCollection(IOrganizationService organizationService)
