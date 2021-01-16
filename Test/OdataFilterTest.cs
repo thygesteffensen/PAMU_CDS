@@ -85,6 +85,22 @@ namespace Test
         }
         
         [TestMethod]
+        public void TestStringValues()
+        {
+            var parser = new OdataFilter();
+
+            var filterExpression =
+                parser.OdataToFilterExpression("jobtitle nq 'Test dummy' and lastname eq 'Doe'");
+
+            Assert.AreEqual(2, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("lastname", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual("Doe", filterExpression.Conditions.First().Values.First());
+            Assert.AreEqual("jobtitle", filterExpression.Conditions.Last().AttributeName);
+            Assert.AreEqual("Test dummy", filterExpression.Conditions.Last().Values.First());
+        }
+        
+        [TestMethod]
         public void TestDecimalValues()
         {
             var parser = new OdataFilter();

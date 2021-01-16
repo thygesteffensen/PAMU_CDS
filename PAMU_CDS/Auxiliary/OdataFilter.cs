@@ -7,6 +7,11 @@ namespace PAMU_CDS.Auxiliary
 {
     public class OdataFilter
     {
+        private static readonly Parser<char> Space = Parse.Char(' ');
+        private static readonly Parser<char> Quote = Parse.Char('\'');
+        private static readonly Parser<char> OpenP = Parse.Char('(');
+        private static readonly Parser<char> CloseP = Parse.Char(')');
+
         private static readonly Parser<char> Except =
             Parse.Char('$').Or(
                 Parse.Char('=')).Or(
@@ -20,6 +25,10 @@ namespace PAMU_CDS.Auxiliary
 
         private static readonly Parser<string> SimpleString =
             Parse.AnyChar.Except(Except).AtLeastOnce().Text().Select(x => x);
+
+        private static readonly Parser<string> StringValue =
+            Parse.AnyChar.Or(Parse.Char(' ')).Except(Parse.Char('\'')).AtLeastOnce().Text().Select(x => x)
+                .Contained(Quote, Quote);
 
         private static readonly Parser<decimal> Decimal =
             (
@@ -63,11 +72,6 @@ namespace PAMU_CDS.Auxiliary
 
         private static readonly Parser<LogicalOperator> LOperators = And.Or(Or);
 
-        private static readonly Parser<char> Space = Parse.Char(' ');
-        private static readonly Parser<char> Quote = Parse.Char('\'');
-        private static readonly Parser<char> OpenP = Parse.Char('(');
-        private static readonly Parser<char> CloseP = Parse.Char(')');
-
         private static readonly Parser<INode> Func =
             from function in SimpleString.Token()
             from op in OpenP.Token()
@@ -88,7 +92,7 @@ namespace PAMU_CDS.Auxiliary
                 .Or
                 (from attr in SimpleString
                     from op in Operators.Contained(Space, Space)
-                    from val in SimpleString.Contained(Quote, Quote)
+                    from val in StringValue
                     select new Statement(attr, op, val))
                 .Or
                 (from attr in SimpleString
