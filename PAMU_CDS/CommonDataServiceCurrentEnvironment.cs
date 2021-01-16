@@ -58,7 +58,7 @@ namespace PAMU_CDS
                 throw new InvalidOperationException("PAMU_CDS does not support the request.");
             }
 
-            var flows = ApplyCriteria(request, preEntity ?? currentEntity);
+            var flows = ApplyCriteria(request, currentEntity ?? preEntity);
 
             var sp = BuildServiceCollection(organizationService).BuildServiceProvider();
 
