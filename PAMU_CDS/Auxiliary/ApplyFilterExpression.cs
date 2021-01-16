@@ -14,7 +14,7 @@ namespace PAMU_CDS.Auxiliary
             {
                 if (!entity.Attributes.TryGetValue(filterExpressionCondition.AttributeName, out var value))
                 {
-                    return false;
+                    value = null;
                 }
 
                 bool boolToReturn;
@@ -24,14 +24,14 @@ namespace PAMU_CDS.Auxiliary
                     case ConditionOperator.Equal:
                         if (
                             IsDecidingCondition(andGroup,
-                                value.Equals(filterExpressionCondition.Values.First()),
+                                filterExpressionCondition.Values.First().Equals(value),
                                 out boolToReturn)
                         ) return boolToReturn;
                         break;
                     case ConditionOperator.NotEqual:
                         if (
                             IsDecidingCondition(andGroup,
-                                !value.Equals(filterExpressionCondition.Values.First()),
+                                !filterExpressionCondition.Values.First().Equals(value),
                                 out boolToReturn)
                         ) return boolToReturn;
                         break;

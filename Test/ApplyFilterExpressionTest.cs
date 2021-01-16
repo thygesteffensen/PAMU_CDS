@@ -58,5 +58,25 @@ namespace Test
 
             Assert.AreEqual(false, result);
         }
+
+        [TestMethod]
+        public void Test()
+        {
+            var parser = new OdataFilter();
+            var filterExpression =
+                parser.OdataToFilterExpression("jobtitle nq 'Test dummy' and lastname eq 'Doe'");
+
+            var entity = new Entity("contact")
+            {
+                Attributes =
+                {
+                    ["lastname"] = "Doe"
+                }
+            };
+
+            var result = ApplyFilterExpression.ApplyFilterExpressionToEntity(entity, filterExpression);
+            
+            Assert.AreEqual(true ,result);
+        }
     }
 }
