@@ -37,7 +37,8 @@ namespace PAMU_CDS.Auxiliary
         private static readonly Parser<object> Null =
             Parse.String("null").Select(x => (object) null);
 
-        private static readonly Parser<ConditionOperator> Equal = Parse.String("eq").Return(ConditionOperator.Equal);
+        private static readonly Parser<ConditionOperator> Equal =
+            Parse.String("eq").Return(ConditionOperator.Equal);
 
         private static readonly Parser<ConditionOperator> LessThan =
             Parse.String("lt").Return(ConditionOperator.LessThan);
@@ -52,7 +53,7 @@ namespace PAMU_CDS.Auxiliary
             Parse.String("le").Return(ConditionOperator.LessEqual);
 
         private static readonly Parser<ConditionOperator> NotEqual =
-            Parse.String("ne").Return(ConditionOperator.NotEqual);
+            Parse.String("nq").Return(ConditionOperator.NotEqual);
 
         private static readonly Parser<ConditionOperator> Operators =
             Equal.Or(LessThan).Or(GreaterThan).Or(GreaterOrEqual).Or(LessOrEqual).Or(NotEqual);
