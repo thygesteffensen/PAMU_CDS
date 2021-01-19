@@ -25,22 +25,23 @@
         <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
         <PackageReference Include="Sprache" Version="2.3.1" />
-    </ItemGroup>
-    
-    <ItemGroup Condition="'$(Configuration)' == 'Release'">
         <PackageReference Include="PowerAutomateMockUp" Version="1.0.0-alpha.28" />
     </ItemGroup>
+    
+<!--    <ItemGroup Condition="'$(Configuration)' == 'Release'">-->
+<!--        <PackageReference Include="PowerAutomateMockUp" Version="1.0.0-alpha.28" />-->
+<!--    </ItemGroup>-->
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)' == 'Debug'">
-        <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net462\PowerAutomateMockUp.dll</HintPath>
-        </Reference>
-    </ItemGroup>
+<!--    <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)' == 'Debug'">-->
+<!--        <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">-->
+<!--            <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net462\PowerAutomateMockUp.dll</HintPath>-->
+<!--        </Reference>-->
+<!--    </ItemGroup>-->
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net48' And '$(Configuration)' == 'Debug'">
-        <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net48\PowerAutomateMockUp.dll</HintPath>
-        </Reference>
-    </ItemGroup>
+<!--    <ItemGroup Condition="'$(TargetFramework)' == 'net48' And '$(Configuration)' == 'Debug'">-->
+<!--        <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">-->
+<!--            <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net48\PowerAutomateMockUp.dll</HintPath>-->
+<!--        </Reference>-->
+<!--    </ItemGroup>-->
 
 </Project>
