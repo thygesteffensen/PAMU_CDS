@@ -25,7 +25,7 @@ jobs:
         run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
 
       - name: Run tests
-        run: dotnet test --verbosity normal
+        run: dotnet test --verbosity normal --configuration Release
 
   release:
     name: Releasing
@@ -78,7 +78,7 @@ jobs:
         run: nuget restore PAMU_CDS.sln
 
       - name: Package PAMU
-        run: msbuild /t:pack /p:PackageVersion=${env:RELEASE_VERSION} /p:OutputPath=..\\artifacts
+        run: msbuild /t:pack /p:PackageVersion=${env:RELEASE_VERSION} /p:Configuration=Release /p:OutputPath=..\\artifacts
         if: ${{ env.RELEASE_VERSION }}
 
       - name: Release to GitHub
