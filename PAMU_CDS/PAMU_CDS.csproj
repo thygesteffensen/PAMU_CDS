@@ -24,9 +24,11 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-        <PackageReference Condition="'$(Configuration)' == 'Release'" Include="PowerAutomateMockUp" Version="1.0.0-alpha.28" />
         <PackageReference Include="Sprache" Version="2.3.1" />
-
+    </ItemGroup>
+    
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <PackageReference Include="PowerAutomateMockUp" Version="1.0.0-alpha.28" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)' == 'Debug'">
