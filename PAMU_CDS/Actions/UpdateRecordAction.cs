@@ -20,11 +20,11 @@ namespace PAMU_CDS.Actions
 
         public UpdateRecordAction(
             IExpressionEngine expressionEngine,
-            OrganizationServiceFactory organizationServiceFactory,
+            OrganizationServiceContext organizationServiceContext,
             IState state) : base(expressionEngine)
         {
-            _organizationService = organizationServiceFactory?.GetOrganizationService() ?? 
-                                   throw new ArgumentNullException(nameof(organizationServiceFactory));
+            _organizationService = organizationServiceContext?.GetOrganizationService() ?? 
+                                   throw new ArgumentNullException(nameof(organizationServiceContext));
             _state = state ?? throw new ArgumentNullException(nameof(state));
         }
 

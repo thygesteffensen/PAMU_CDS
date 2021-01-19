@@ -12,7 +12,7 @@ namespace PAMU_CDS
         {
             const string apiId = "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps";
 
-            services.AddSingleton<OrganizationServiceFactory>();
+            services.AddScoped<OrganizationServiceContext>();
 
             services.AddSingleton<CommonDataServiceCurrentEnvironment>();
 

@@ -44,7 +44,7 @@ namespace Test.UnitTest
                     outputActionName = actionName;
                 });
 
-            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
 
             var createActionExecutor =
                 new CreateRecordAction(expressionEngineMock.Object, fa, stateMock.Object);

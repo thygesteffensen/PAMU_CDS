@@ -2,7 +2,7 @@
 
 namespace PAMU_CDS.Auxiliary
 {
-    public class OrganizationServiceFactory
+    public class OrganizationServiceContext
     {
         public IOrganizationService OrganizationService { get; set; }
 

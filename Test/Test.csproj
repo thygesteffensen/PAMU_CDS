@@ -37,4 +37,10 @@
         </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net48\PowerAutomateMockUp.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

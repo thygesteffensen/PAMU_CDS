@@ -53,7 +53,7 @@ namespace Test.UnitTest
                     outputValueContainer = valueContainer;
                 });
 
-            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
             
             var createActionExecutor =
                 new ListRecordsAction(expressionEngineMock.Object, fa, stateMock.Object,
@@ -117,7 +117,7 @@ namespace Test.UnitTest
                     outputValueContainer = valueContainer;
                 });
 
-            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
             
             var listRecordsActionExecutor =
                 new ListRecordsAction(expressionEngineMock.Object, fa, stateMock.Object,

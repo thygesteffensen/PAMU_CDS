@@ -18,10 +18,10 @@ namespace PAMU_CDS.Actions
 
         public DisAndAssociateEntitiesAction(
             IExpressionEngine expressionEngine,
-            OrganizationServiceFactory organizationServiceFactory) : base(expressionEngine)
+            OrganizationServiceContext organizationServiceContext) : base(expressionEngine)
         {
-            _organizationService = organizationServiceFactory?.GetOrganizationService() ?? 
-                                   throw new ArgumentNullException(nameof(organizationServiceFactory));
+            _organizationService = organizationServiceContext?.GetOrganizationService() ?? 
+                                   throw new ArgumentNullException(nameof(organizationServiceContext));
         }
 
 

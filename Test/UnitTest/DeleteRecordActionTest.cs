@@ -35,7 +35,7 @@ namespace Test.UnitTest
             expressionEngineMock.Setup(x => x.Parse("@triggerOutputs()?['body/contactid']")).Returns(guid.ToString());
             expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
             
-            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
             
             var deleteActionExecutor =
                 new DeleteRecordAction(expressionEngineMock.Object, fa);

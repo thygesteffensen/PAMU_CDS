@@ -19,8 +19,9 @@ namespace PAMU_CDS
     {
         private readonly FlowRunner _flowRunner;
         private readonly IState _state;
-        private readonly OrganizationServiceFactory _organizationServiceFactory;
+        private readonly OrganizationServiceContext _organizationServiceContext;
         private readonly ILogger<CommonDataServiceCurrentEnvironment> _logger;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly CdsFlowSettings _cdsFlowSettings;
         private readonly CdsFlowSettings _settings;
         private List<TriggerSkeleton> _triggers = new List<TriggerSkeleton>();
@@ -28,18 +29,20 @@ namespace PAMU_CDS
         public CommonDataServiceCurrentEnvironment(
             FlowRunner flowRunner,
             IState state, // Remove this in the future
-            OrganizationServiceFactory organizationServiceFactory,
+            OrganizationServiceContext organizationServiceContext,
             ILogger<CommonDataServiceCurrentEnvironment> logger,
-            IOptions<CdsFlowSettings> cdsFlowSettings)
+            IOptions<CdsFlowSettings> cdsFlowSettings,
+            IServiceScopeFactory scopeFactory)
         {
             _flowRunner = flowRunner ?? throw new ArgumentNullException(nameof(flowRunner));
             _state = state ?? throw new ArgumentNullException(nameof(state));
-            _organizationServiceFactory = organizationServiceFactory ??
-                                          throw new ArgumentNullException(nameof(organizationServiceFactory));
+            _organizationServiceContext = organizationServiceContext ??
+                                          throw new ArgumentNullException(nameof(organizationServiceContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
             _cdsFlowSettings = cdsFlowSettings?.Value;
         }
-        
+
         public void AddFlows(Uri flowFolderPath)
         {
             var files = Directory.GetFiles(flowFolderPath.AbsolutePath);
@@ -104,21 +107,22 @@ namespace PAMU_CDS
                 throw new InvalidOperationException("PAMU_CDS does not support the request.");
             }
 
-            _organizationServiceFactory.OrganizationService = organizationService;
+            using var scope = _scopeFactory.CreateScope();
+
+            scope.ServiceProvider.GetRequiredService<OrganizationServiceContext>().OrganizationService =
+                organizationService;
 
             var flows = ApplyCriteria(request, currentEntity ?? preEntity);
 
-            // var flowRunner = sp.GetRequiredService<FlowRunner>();
-
             foreach (var triggerSkeleton in flows)
             {
-                // var state = sp.GetRequiredService<IState>();
+                var state = scope.ServiceProvider.GetRequiredService<IState>();
 
-                _state.AddTriggerOutputs(currentEntity.ToValueContainer());
+                state.AddTriggerOutputs(currentEntity.ToValueContainer());
 
-                // var flowRunner = sp.GetRequiredService<FlowRunner>();
-                _flowRunner.InitializeFlowRunner(triggerSkeleton.FlowDescription.AbsolutePath);
-                await _flowRunner.Trigger();
+                var flowRunner = scope.ServiceProvider.GetRequiredService<FlowRunner>();
+                flowRunner.InitializeFlowRunner(triggerSkeleton.FlowDescription.AbsolutePath);
+                await flowRunner.Trigger();
             }
         }
 
