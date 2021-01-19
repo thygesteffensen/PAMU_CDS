@@ -14,7 +14,7 @@ namespace PAMU_CDS
 
             services.AddScoped<OrganizationServiceContext>();
 
-            services.AddSingleton<CommonDataServiceCurrentEnvironment>();
+            services.AddScoped<CommonDataServiceCurrentEnvironment>();
 
             services.AddFlowActionByApiIdAndOperationsName<CdsTrigger>(apiId, CdsTrigger.OperationId);
 
