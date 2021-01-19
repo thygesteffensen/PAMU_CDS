@@ -5,6 +5,7 @@ using Microsoft.Xrm.Sdk;
 using Moq;
 using Newtonsoft.Json.Linq;
 using PAMU_CDS.Actions;
+using PAMU_CDS.Auxiliary;
 using Parser.ExpressionParser;
 using Parser.FlowParser.ActionExecutors;
 
@@ -34,8 +35,10 @@ namespace Test.UnitTest
             expressionEngineMock.Setup(x => x.Parse("@triggerOutputs()?['body/contactid']")).Returns(guid.ToString());
             expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
             
+            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            
             var deleteActionExecutor =
-                new DeleteRecordAction(expressionEngineMock.Object, orgServiceMock.Object);
+                new DeleteRecordAction(expressionEngineMock.Object, fa);
 
             var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +

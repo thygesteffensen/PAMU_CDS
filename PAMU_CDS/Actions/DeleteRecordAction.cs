@@ -13,10 +13,12 @@ namespace PAMU_CDS.Actions
         
         private readonly IOrganizationService _organizationService;
 
-        public DeleteRecordAction(IExpressionEngine expressionEngine, IOrganizationService organizationService) : base(
-            expressionEngine)
+        public DeleteRecordAction(
+            IExpressionEngine expressionEngine, 
+            OrganizationServiceFactory organizationServiceFactory) : base(expressionEngine)
         {
-            _organizationService = organizationService ?? throw new ArgumentNullException(nameof(organizationService));
+            _organizationService = organizationServiceFactory?.GetOrganizationService() ?? 
+                                   throw new ArgumentNullException(nameof(organizationServiceFactory));
         }
 
         public override Task<ActionResult> Execute()

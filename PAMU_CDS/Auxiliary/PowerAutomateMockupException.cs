@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace PAMU_CDS
+namespace PAMU_CDS.Auxiliary
 {
     public class PowerAutomateException : Exception
     {

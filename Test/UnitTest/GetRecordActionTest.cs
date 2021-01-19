@@ -8,6 +8,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Moq;
 using Newtonsoft.Json.Linq;
 using PAMU_CDS.Actions;
+using PAMU_CDS.Auxiliary;
 using Parser;
 using Parser.ExpressionParser;
 using Parser.FlowParser.ActionExecutors;
@@ -47,8 +48,10 @@ namespace Test.UnitTest
                     outputValueContainer = valueContainer;
                 });
 
+            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            
             var createActionExecutor =
-                new GetItemAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object,
+                new GetItemAction(expressionEngineMock.Object, fa, stateMock.Object,
                     loggerMock.Object);
 
             var actionDescription =
@@ -129,8 +132,10 @@ namespace Test.UnitTest
                     outputValueContainer = valueContainer;
                 });
 
+            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            
             var createActionExecutor =
-                new GetItemAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object,
+                new GetItemAction(expressionEngineMock.Object, fa, stateMock.Object,
                     loggerMock.Object);
 
             var actionDescription =

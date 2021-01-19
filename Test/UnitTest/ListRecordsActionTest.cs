@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Moq;
 using Newtonsoft.Json.Linq;
+using PAMU_CDS.Auxiliary;
 using PAMU_CDS.Actions;
 using Parser;
 using Parser.ExpressionParser;
@@ -52,9 +53,12 @@ namespace Test.UnitTest
                     outputValueContainer = valueContainer;
                 });
 
+            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            
             var createActionExecutor =
-                new ListRecordsAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object,
+                new ListRecordsAction(expressionEngineMock.Object, fa, stateMock.Object,
                     loggerMock.Object);
+            
             var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +
                 "\"inputs\":" +
@@ -113,8 +117,10 @@ namespace Test.UnitTest
                     outputValueContainer = valueContainer;
                 });
 
+            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+            
             var listRecordsActionExecutor =
-                new ListRecordsAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object,
+                new ListRecordsAction(expressionEngineMock.Object, fa, stateMock.Object,
                     loggerMock.Object);
             var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +

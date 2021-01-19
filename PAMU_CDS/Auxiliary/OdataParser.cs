@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Sprache;
 
-namespace PAMU_CDS
+namespace PAMU_CDS.Auxiliary
 {
     public class OdataParser
     {

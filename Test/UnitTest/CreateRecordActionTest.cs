@@ -6,6 +6,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Moq;
 using Newtonsoft.Json.Linq;
 using PAMU_CDS.Actions;
+using PAMU_CDS.Auxiliary;
 using Parser;
 using Parser.ExpressionParser;
 using Parser.FlowParser.ActionExecutors;
@@ -43,8 +44,10 @@ namespace Test.UnitTest
                     outputActionName = actionName;
                 });
 
+            var fa = new OrganizationServiceFactory {OrganizationService = orgServiceMock.Object};
+
             var createActionExecutor =
-                new CreateRecordAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object);
+                new CreateRecordAction(expressionEngineMock.Object, fa, stateMock.Object);
 
             var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +

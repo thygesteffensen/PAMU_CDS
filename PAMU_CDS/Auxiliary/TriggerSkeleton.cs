@@ -1,7 +1,7 @@
 ﻿using System;
 using PAMU_CDS.Enums;
 
-namespace PAMU_CDS
+namespace PAMU_CDS.Auxiliary
 {
     public class TriggerSkeleton
     {

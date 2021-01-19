@@ -24,11 +24,12 @@ namespace PAMU_CDS.Actions
 
         public ListRecordsAction(
             IExpressionEngine expressionEngine,
-            IOrganizationService organizationService,
+            OrganizationServiceFactory organizationServiceFactory,
             IState state,
             ILogger<ListRecordsAction> logger) : base(expressionEngine)
         {
-            _organizationService = organizationService ?? throw new ArgumentNullException(nameof(organizationService));
+            _organizationService = organizationServiceFactory?.GetOrganizationService() ?? 
+                                   throw new ArgumentNullException(nameof(organizationServiceFactory));
             _state = state ?? throw new ArgumentNullException(nameof(state));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
