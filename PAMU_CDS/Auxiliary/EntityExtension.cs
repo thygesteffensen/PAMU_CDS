@@ -40,7 +40,7 @@ namespace PAMU_CDS.Auxiliary
             foreach (var keyValuePair in entity.Attributes)
             {
                 AddObjectToValueContainer(triggerOutputs, keyValuePair);
-                
+
                 triggerOutputs["@odata.type"] = new ValueContainer($"#Microsoft.Dynamics.CRM.{entity.LogicalName}");
             }
 
@@ -73,7 +73,7 @@ namespace PAMU_CDS.Auxiliary
                     dict[kvp.Key] = new ValueContainer((float) d);
                     break;
                 case decimal d:
-                    dict[kvp.Key] = new ValueContainer(d);
+                    dict[kvp.Key] = new ValueContainer((float) d);
                     break;
                 case Guid guid:
                     dict[$"{kvp.Key}@odata.type"] = new ValueContainer("#Guid");
