@@ -35,6 +35,9 @@
         <None Update="TestFlows\Single_Custom_ActionNonCdsTrigger.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="TestFlows\Every_CDS_ce_action.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>

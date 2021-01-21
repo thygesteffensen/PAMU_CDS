@@ -34,11 +34,23 @@ namespace PAMU_CDS
 
         public void AddFlows(Uri flowFolderPath)
         {
-            var files = Directory.GetFiles(flowFolderPath.AbsolutePath);
-
-            foreach (var file in files)
+            if (Directory.Exists(flowFolderPath.AbsolutePath))
             {
-                _triggers.AddTo(file);
+                var files = Directory.GetFiles(flowFolderPath.AbsolutePath);
+
+                foreach (var file in files)
+                {
+                    _triggers.AddTo(file);
+                }
+            }
+            else if (File.Exists(flowFolderPath.AbsolutePath))
+            {
+                _triggers.AddTo(flowFolderPath.AbsolutePath);
+            }
+            else
+            {
+                throw new DirectoryNotFoundException(
+                    "Could not find either directory or file from the given path.");
             }
         }
 
@@ -69,7 +81,8 @@ namespace PAMU_CDS
             _logger.LogInformation("Async Trigger event occured");
             if (!new[] {"Create", "Delete", "Update"}.Contains(request.RequestName))
             {
-                throw new InvalidOperationException("PAMU_CDS does not support the request.");
+                throw new InvalidOperationException(
+                    $"PAMU_CDS does not support the request: {request.RequestName}.");
             }
 
             using var scope = _scopeFactory.CreateScope();
@@ -85,7 +98,7 @@ namespace PAMU_CDS
 
                 state.AddTriggerOutputs(currentEntity.ToValueContainer());
 
-                var flowRunner = scope.ServiceProvider.GetRequiredService<FlowRunner>();
+                var flowRunner = scope.ServiceProvider.GetRequiredService<IFlowRunner>();
                 flowRunner.InitializeFlowRunner(triggerSkeleton.FlowDescription.AbsolutePath);
                 await flowRunner.Trigger();
             }

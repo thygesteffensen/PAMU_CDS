@@ -28,7 +28,7 @@ namespace PAMU_CDS.Actions
             IState state,
             ILogger<GetItemAction> logger) : base(expressionEngine)
         {
-            _organizationService = organizationServiceContext?.GetOrganizationService() ?? 
+            _organizationService = organizationServiceContext?.GetOrganizationService() ??
                                    throw new ArgumentNullException(nameof(organizationServiceContext));
             _state = state ?? throw new ArgumentNullException(nameof(state));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -69,6 +69,7 @@ namespace PAMU_CDS.Actions
                         $"0x0 | Could not find a property named '{messageDivided[1]}' on type 'Microsoft.Dynamics.CRM.{messageDivided[3]}'",
                         exp);
                 }
+
                 return Task.FromResult(new ActionResult
                     {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
@@ -80,11 +81,10 @@ namespace PAMU_CDS.Actions
         {
             var paras = Parameters.GetValue<Dictionary<string, ValueContainer>>();
             if (!paras.ContainsKey("$expand")) return null;
-            
+
             var t = new RelationshipQueryCollection();
 
             var p = new OdataParser();
-            // TODO: Refactor with version alpha.18
             var expand = p.Get(Parameters["$expand"].GetValue<string>());
 
 
@@ -127,7 +127,6 @@ namespace PAMU_CDS.Actions
         private ColumnSet BuildColumnSet()
         {
             var columnSet = new ColumnSet();
-            // TODO: Refactor with version alpha.18
             var paras = Parameters.GetValue<Dictionary<string, ValueContainer>>();
             if (!paras.ContainsKey("$select"))
             {

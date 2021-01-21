@@ -42,6 +42,8 @@ namespace Test
             var services = new ServiceCollection();
             services.AddFlowRunner();
             services.AddPamuCds();
+
+            services.Configure<CdsFlowSettings>(x => x.DontExecuteFlows = new[] {"Every_CDS_ce_action.json"});
             
             services.AddFlowActionByName<ManualActionExecutor>("Post_a_notification_using_non_existing_provider");
 
