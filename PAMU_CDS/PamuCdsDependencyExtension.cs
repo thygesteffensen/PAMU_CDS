@@ -14,7 +14,7 @@ namespace PAMU_CDS
 
             services.AddScoped<OrganizationServiceContext>();
 
-            services.AddScoped<CommonDataServiceCurrentEnvironment>();
+            services.AddScoped<XrmMockupCdsTrigger>();
 
             services.AddFlowActionByApiIdAndOperationsName<CdsTrigger>(apiId, CdsTrigger.OperationId);
 
@@ -31,7 +31,8 @@ namespace PAMU_CDS
             services.AddFlowActionByApiIdAndOperationsName<DisAndAssociateEntitiesAction>(apiId,
                 DisAndAssociateEntitiesAction.OperationId);
 
-            services.AddFlowActionByApiIdAndOperationsName<ScopeActionExecutor>(apiId, new[] {"ExecuteChangeset"});
+            services.AddFlowActionByApiIdAndOperationsName<ScopeActionExecutor>(apiId,
+                new[] {"ExecuteChangeset"});
         }
     }
 }

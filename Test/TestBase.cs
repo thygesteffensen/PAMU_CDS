@@ -20,7 +20,7 @@ namespace Test
         protected IOrganizationService OrgAdminUiService;
         protected IOrganizationService OrgAdminService;
         protected static XrmMockup365 Crm;
-        protected static CommonDataServiceCurrentEnvironment _pamuCds;
+        protected static XrmMockupCdsTrigger _pamuCds;
 
         public TestBase()
         {
@@ -47,7 +47,7 @@ namespace Test
 
             var sp = services.BuildServiceProvider();
 
-            _pamuCds = sp.GetRequiredService<CommonDataServiceCurrentEnvironment>();
+            _pamuCds = sp.GetRequiredService<XrmMockupCdsTrigger>();
             
             _pamuCds.AddFlows(new Uri(TestFlowPath));
             

@@ -5,6 +5,7 @@ namespace PAMU_CDS.Auxiliary
 {
     public class TriggerSkeleton
     {
+        public string FlowName { get; set; }
         public TriggerCondition TriggerCondition { get; set; }
         public string Table { get; set; }
         public Scope Scope { get; set; }

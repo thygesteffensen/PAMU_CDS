@@ -1,9 +1,7 @@
-﻿using Parser.FlowParser;
-
-namespace PAMU_CDS
+﻿namespace PAMU_CDS
 {
-    public class CdsFlowSettings : FlowSettings
+    public class CdsFlowSettings
     {
-       
+        public string[] DontExecuteFlows { get; set; } = new string[0];
     }
 }

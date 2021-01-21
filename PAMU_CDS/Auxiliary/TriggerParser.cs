@@ -20,6 +20,7 @@ namespace PAMU_CDS.Auxiliary
 
             var trigger = new TriggerSkeleton
             {
+                FlowName = Path.GetFileName(flowDefinitionPath),
                 TriggerCondition =
                     ToCondition(triggerJson.SelectToken("$..subscriptionRequest/message")),
                 Table = triggerJson.SelectToken("$..subscriptionRequest/entityname").Value<string>(),

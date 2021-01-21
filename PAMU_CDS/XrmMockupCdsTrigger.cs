@@ -15,32 +15,21 @@ using Parser.FlowParser;
 
 namespace PAMU_CDS
 {
-    public class CommonDataServiceCurrentEnvironment : IMockUpExtension
+    public class XrmMockupCdsTrigger : IMockUpExtension
     {
-        private readonly FlowRunner _flowRunner;
-        private readonly IState _state;
-        private readonly OrganizationServiceContext _organizationServiceContext;
-        private readonly ILogger<CommonDataServiceCurrentEnvironment> _logger;
+        private readonly ILogger<XrmMockupCdsTrigger> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly CdsFlowSettings _cdsFlowSettings;
-        private readonly CdsFlowSettings _settings;
         private List<TriggerSkeleton> _triggers = new List<TriggerSkeleton>();
 
-        public CommonDataServiceCurrentEnvironment(
-            FlowRunner flowRunner,
-            IState state, // Remove this in the future
-            OrganizationServiceContext organizationServiceContext,
-            ILogger<CommonDataServiceCurrentEnvironment> logger,
+        public XrmMockupCdsTrigger(
+            ILogger<XrmMockupCdsTrigger> logger,
             IOptions<CdsFlowSettings> cdsFlowSettings,
             IServiceScopeFactory scopeFactory)
         {
-            _flowRunner = flowRunner ?? throw new ArgumentNullException(nameof(flowRunner));
-            _state = state ?? throw new ArgumentNullException(nameof(state));
-            _organizationServiceContext = organizationServiceContext ??
-                                          throw new ArgumentNullException(nameof(organizationServiceContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
-            _cdsFlowSettings = cdsFlowSettings?.Value;
+            _cdsFlowSettings = cdsFlowSettings?.Value ?? new CdsFlowSettings();
         }
 
         public void AddFlows(Uri flowFolderPath)
@@ -58,32 +47,6 @@ namespace PAMU_CDS
             _triggers = new List<TriggerSkeleton>();
         }
 
-        /*private void CommonConstructor(Uri flowFolderPath, IServiceScopeFactory factory)
-        {
-            factory.CreateScope();
-            var files = Directory.GetFiles(flowFolderPath.AbsolutePath);
-
-            _triggers = new List<TriggerSkeleton>();
-
-            foreach (var file in files)
-            {
-                _triggers.AddTo(file);
-            }
-        }*/
-
-        /*public CommonDataServiceCurrentEnvironment(Uri flowFolderPath, Action<IServiceCollection> reg = null)
-        {
-            CommonConstructor(flowFolderPath);
-
-            reg?.Invoke(Services); // Action
-
-            var flowSettings = (FlowSettings) settings;
-
-
-            Services.Configure<FlowSettings>();
-            _settings = settings;
-        }*/
-
         public void TriggerExtension(
             IOrganizationService organizationService,
             OrganizationRequest request,
@@ -91,6 +54,7 @@ namespace PAMU_CDS
             Entity preEntity,
             EntityReference userRef)
         {
+            _logger.LogInformation("Non-async Trigger event occured");
             var triggerObject = TriggerExtensionAsync(organizationService, request, currentEntity, preEntity, userRef);
             triggerObject.Wait();
         }
@@ -102,6 +66,7 @@ namespace PAMU_CDS
             Entity preEntity,
             EntityReference userRef)
         {
+            _logger.LogInformation("Async Trigger event occured");
             if (!new[] {"Create", "Delete", "Update"}.Contains(request.RequestName))
             {
                 throw new InvalidOperationException("PAMU_CDS does not support the request.");
@@ -167,6 +132,7 @@ namespace PAMU_CDS
             }
 
             var t = new OdataFilter();
+            flows = flows.Where(x => !_cdsFlowSettings.DontExecuteFlows.Contains(x.FlowName));
             flows = flows.Where(x => FulfillFilterExpression(x.FilterExpression, entity, t));
 
             return flows;
