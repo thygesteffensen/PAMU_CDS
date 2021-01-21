@@ -72,6 +72,9 @@ namespace PAMU_CDS.Auxiliary
                 case double d:
                     dict[kvp.Key] = new ValueContainer((float) d);
                     break;
+                case decimal d:
+                    dict[kvp.Key] = new ValueContainer(d);
+                    break;
                 case Guid guid:
                     dict[$"{kvp.Key}@odata.type"] = new ValueContainer("#Guid");
                     dict[kvp.Key] = new ValueContainer(guid.ToString());
