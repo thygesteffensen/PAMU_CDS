@@ -18,9 +18,7 @@ This is a full featured mock for the [Common Date Service (current environment)]
 
 The mock is build using [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup) as the flow engine and [XrmMockup](https://github.com/delegateas/XrmMockup) to mock the underlying Dynamics 365.
 
-## How to use
-
-### Getting Started
+## Getting Started
 
 First of all, replace your XrmMockup dependency with the [development version](https://www.nuget.org/packages/bd1fe5ca33fd455dafb99d34768b8de4/) developed to this project. The development version is build on the latest version of XrmMockup.
 
@@ -29,30 +27,64 @@ When configuring XrmMockup, add the following to the `XrmMockupSettings` when co
 MockUpExtensions = new List<IMockUpExtension> {_pamuCds}
 ```
 
-Somewhere before the XrmMockup configure step, do the following:
+Somewhere before the XrmMockup configure step, do the following to setup PAMU and add PAMU_CDS to the service collection:
 ```c#
-CommonDataServiceCurrentEnvironment _pamuCds;
+var services = new ServiceCollection();
+services.AddFlowRunner();
+services.AddPamuCds();
 
-// ...
+var sp = services.BuildServiceProvider();
 
-var flowFolderPath = new Uri("<Path to folder containing flows>");
-_pamuCds = new CommonDataServiceCurrentEnvironment(flowFolderPath);
+_pamuCds = sp.GetRequiredService<XrmMockupCdsTrigger>();
+_pamuCds.AddFlows(new Uri(System.IO.Path.GetFullPath(@"Workflows")));
 ```
 
 That's all. Now you can run your unit tests and the action executed in Power Automate flow will also be executed now, against your mock instance.
 
-### Adding handlers to other actions 
-Coming soon
+### Download flows
+One way to get the flows, is to Export the soltuion containing the flows, then unzip and extract the flows to the desired location.
 
-### Asserting Actions
-Coming soon
+If you are using [XrmFramework](https://github.com/delegateas/XrmFramework) or if you're using [Daxif](https://github.com/delegateas/Daxif), you can execute the `F#` availible at [Download flows script](https://github.com/thygesteffensen/FlowUnitTester/blob/main/DG/DG.FlowUnitTester/Tools/Daxif/DownloadWorkflows.fsx).
+
+Depending on the location of the flows, they might have to be included in the `.csproj`. If the flows are placed in a directory inside the test project, in a folder named `flows`, simply add the following `ItemGroup`, to copy the flows:
+
+```xml
+<ItemGroup>
+    <Content Include="flows\**\*.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+</ItemGroup>
+```
+
+### Configuring
+Like PAMU, PAMU_CDS also has options for configuration.
+
+#### Do not execute flows
+Add the name of the flow description file, to ignore the flow when triggering from flow from XrmMockup.
+
+```cs
+services.Configure<CdsFlowSettings>(x => 
+    x.DontExecuteFlows = new[] {"<flow description file name>.json"});
+```
 
 ## Actions
 
 The focus right now is create a MVP to use in my bachelor project, this meaning not all functions will be implemented at the moment. I will later create a description of how to contribute to this project, but not before the assignment have been handed in.
 
+### Unsupported actions
+As with [PAMU](https://github.com/thygesteffensen/PowerAutomateMockup), you can add actions using one of the three extension methods
+```cs
+services.AddFlowActionByName<GetMsnWeather>("Get_forecast_for_today_(Metric)");
+services.AddFlowActionByApiIdAndOperationsName<Notification>(
+    "/providers/Microsoft.PowerApps/apis/shared_flowpush", 
+    new []{ "SendEmailNotification", "SendNotification" });
+services.AddFlowActionByFlowType<IfActionExecutor>("If");
+```
+
+A more detialed guide is availible at [PAMU#Actions](https://github.com/thygesteffensen/PowerAutomateMockUp/tree/dev#adding-actions).
+
 ### General
-Every call against CDS returns a JSON object with headers and body. Headers will not be generated, as the MVP does not support the use cae.
+Every call against CDS returns a JSON object with headers and body. Headers will not be generated, as the MVP does not support the use case.
 
 The body will almost be as the real deal, but with minor deviations. They are described below.
 
