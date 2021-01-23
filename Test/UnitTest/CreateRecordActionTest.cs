@@ -22,7 +22,6 @@ namespace Test.UnitTest
             var guid = Guid.NewGuid();
 
             Entity createEntity = null;
-            string outputActionName = null;
 
             var orgServiceMock = new Mock<IOrganizationService>();
 
@@ -37,17 +36,9 @@ namespace Test.UnitTest
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>((input) => input);
             expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
 
-            var stateMock = new Mock<IState>();
-            stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
-                .Callback<string, ValueContainer>((actionName, valueContainer) =>
-                {
-                    outputActionName = actionName;
-                });
-
             var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
 
-            var createActionExecutor =
-                new CreateRecordAction(expressionEngineMock.Object, fa, stateMock.Object);
+            var createActionExecutor = new CreateRecordAction(expressionEngineMock.Object, fa);
 
             var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +
@@ -61,9 +52,6 @@ namespace Test.UnitTest
 
             Assert.IsNotNull(createEntity);
             Assert.AreEqual("John Doe", createEntity["name"]);
-            
-            Assert.IsNotNull(outputActionName);
-            Assert.AreEqual("CreateContact", outputActionName);
             
             Assert.AreEqual(ActionStatus.Succeeded, response.ActionStatus);
             Assert.AreEqual(true, response.ContinueExecution);

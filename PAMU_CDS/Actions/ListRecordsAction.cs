@@ -19,23 +19,21 @@ namespace PAMU_CDS.Actions
         public static readonly string[] OperationId = {"ListRecords"};
 
         private readonly IOrganizationService _organizationService;
-        private readonly IState _state;
         private readonly ILogger<ListRecordsAction> _logger;
 
         public ListRecordsAction(
             IExpressionEngine expressionEngine,
             OrganizationServiceContext organizationServiceContext,
-            IState state,
             ILogger<ListRecordsAction> logger) : base(expressionEngine)
         {
-            _organizationService = organizationServiceContext?.GetOrganizationService() ?? 
+            _organizationService = organizationServiceContext?.GetOrganizationService() ??
                                    throw new ArgumentNullException(nameof(organizationServiceContext));
-            _state = state ?? throw new ArgumentNullException(nameof(state));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public override Task<ActionResult> Execute()
         {
+            var result = new ActionResult();
             var entity = new Entity();
             entity.CreateEntityFromParameters(Parameters);
 
@@ -47,7 +45,12 @@ namespace PAMU_CDS.Actions
                         Query = BuildQuery(Parameters.AsDict(), entity)
                     });
 
-                AddResponseToOutput(response.EntityCollection);
+                var list = response.EntityCollection.Entities.Select(entity => entity.ToValueContainer()).ToList();
+                result.ActionOutput = new ValueContainer(new Dictionary<string, ValueContainer>
+                {
+                    {"body/value", new ValueContainer(list)}
+                });
+                result.ActionStatus = ActionStatus.Succeeded;
             }
             catch (InvalidPluginExecutionException exp)
             {
@@ -64,21 +67,12 @@ namespace PAMU_CDS.Actions
                         $"0x0 | Could not find a property named '{messageDivided[1]}' on type 'Microsoft.Dynamics.CRM.{messageDivided[3]}'",
                         exp);
                 }
+
                 return Task.FromResult(new ActionResult
                     {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
 
-            return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});
-        }
-
-        private void AddResponseToOutput(EntityCollection responseEntityCollection)
-        {
-            var list = responseEntityCollection.Entities.Select(entity => entity.ToValueContainer()).ToList();
-
-            _state.AddOutputs("", new ValueContainer(new Dictionary<string, ValueContainer>
-            {
-                {"body/value", new ValueContainer(list)}
-            }));
+            return Task.FromResult(result);
         }
 
         private QueryBase BuildQuery(IReadOnlyDictionary<string, ValueContainer> paramDict, Entity entity)

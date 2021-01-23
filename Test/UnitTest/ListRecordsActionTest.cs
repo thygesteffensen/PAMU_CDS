@@ -24,7 +24,6 @@ namespace Test.UnitTest
             var loggerMock = new Mock<ILogger<ListRecordsAction>>();
 
             RetrieveMultipleRequest retrieveRequest = null;
-            ValueContainer outputValueContainer = null;
 
             var orgServiceMock = new Mock<IOrganizationService>();
 
@@ -44,21 +43,15 @@ namespace Test.UnitTest
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
-            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
-            
-            var stateMock = new Mock<IState>();
-            stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
-                .Callback<string, ValueContainer>((actionName, valueContainer) =>
-                {
-                    outputValueContainer = valueContainer;
-                });
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>()))
+                .Returns<string>((input) => new ValueContainer(input));
 
             var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
-            
-            var createActionExecutor =
-                new ListRecordsAction(expressionEngineMock.Object, fa, stateMock.Object,
+
+            var listRecordsAction =
+                new ListRecordsAction(expressionEngineMock.Object, fa,
                     loggerMock.Object);
-            
+
             var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +
                 "\"inputs\":" +
@@ -66,9 +59,9 @@ namespace Test.UnitTest
                 +
                 $"\"parameters\":{{\"entityName\":\"contacts\"}}," +
                 "\"authentication\":\"@parameters('$authentication')\"}}";
-            createActionExecutor.InitializeActionExecutor("GetContacts", JToken.Parse(actionDescription));
+            listRecordsAction.InitializeActionExecutor("GetContacts", JToken.Parse(actionDescription));
 
-            var response = await createActionExecutor.Execute();
+            var response = await listRecordsAction.Execute();
 
             orgServiceMock.Verify(x => x.Execute(It.IsAny<RetrieveMultipleRequest>()));
 
@@ -77,7 +70,7 @@ namespace Test.UnitTest
 
             var query = (QueryExpression) retrieveRequest.Query;
             Assert.AreEqual("contact", query.EntityName);
-            Assert.IsNotNull(outputValueContainer);
+            Assert.IsNotNull(response.ActionOutput);
             Assert.AreEqual(ActionStatus.Succeeded, response.ActionStatus);
             Assert.AreEqual(true, response.ContinueExecution);
             Assert.AreEqual(null, response.NextAction);
@@ -89,7 +82,6 @@ namespace Test.UnitTest
             var loggerMock = new Mock<ILogger<ListRecordsAction>>();
 
             RetrieveMultipleRequest retrieveRequest = null;
-            ValueContainer outputValueContainer = null;
 
             var orgServiceMock = new Mock<IOrganizationService>();
 
@@ -108,20 +100,13 @@ namespace Test.UnitTest
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
-            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input, true));
-
-            var stateMock = new Mock<IState>();
-            stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
-                .Callback<string, ValueContainer>((actionName, valueContainer) =>
-                {
-                    outputValueContainer = valueContainer;
-                });
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>()))
+                .Returns<string>((input) => new ValueContainer(input, true));
 
             var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
-            
+
             var listRecordsActionExecutor =
-                new ListRecordsAction(expressionEngineMock.Object, fa, stateMock.Object,
-                    loggerMock.Object);
+                new ListRecordsAction(expressionEngineMock.Object, fa, loggerMock.Object);
             var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +
                 "\"inputs\":" +
@@ -145,7 +130,7 @@ namespace Test.UnitTest
 
             var query = (QueryExpression) retrieveRequest.Query;
             Assert.AreEqual("contact", query.EntityName);
-            Assert.IsNotNull(outputValueContainer);
+            Assert.IsNotNull(response.ActionOutput);
 
             Assert.AreEqual(false, query.ColumnSet.AllColumns);
             Assert.IsTrue(query.ColumnSet.Columns.Contains("fullname"));
@@ -158,7 +143,7 @@ namespace Test.UnitTest
             Assert.AreEqual(OrderType.Descending, query.Orders.First().OrderType);
 
             Assert.IsNotNull(query.Criteria);
-            
+
             Assert.AreEqual(ActionStatus.Succeeded, response.ActionStatus);
             Assert.AreEqual(true, response.ContinueExecution);
             Assert.AreEqual(null, response.NextAction);

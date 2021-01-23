@@ -24,7 +24,6 @@ namespace Test.UnitTest
             var guid = Guid.NewGuid();
 
             OrganizationRequest updateRequest = null;
-            string outputActionName = null;
 
             var orgServiceMock = new Mock<IOrganizationService>();
 
@@ -39,17 +38,10 @@ namespace Test.UnitTest
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>((input) => input);
             expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
 
-            var stateMock = new Mock<IState>();
-            stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
-                .Callback<string, ValueContainer>((actionName, valueContainer) =>
-                {
-                    outputActionName = actionName;
-                });
-
             var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
             
             var updateActionExecutor =
-                new UpdateRecordAction(expressionEngineMock.Object, fa, stateMock.Object);
+                new UpdateRecordAction(expressionEngineMock.Object, fa);
 
             var actionDescription =
                 "{\"type\":\"OpenApiConnection\"," +
@@ -74,10 +66,6 @@ namespace Test.UnitTest
             Assert.IsTrue(_entity.Attributes.ContainsKey("address1_line1"));
             Assert.AreEqual("Update", updateRequest.RequestName);
             
-            
-            Assert.IsNotNull(outputActionName);
-            Assert.AreEqual("UpdateAccount", outputActionName);
-
             Assert.AreEqual(ActionStatus.Succeeded, response.ActionStatus);
             Assert.AreEqual(true, response.ContinueExecution);
             Assert.AreEqual(null, response.NextAction);

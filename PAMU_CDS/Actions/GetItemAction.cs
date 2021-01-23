@@ -19,23 +19,21 @@ namespace PAMU_CDS.Actions
         public static readonly string[] OperationId = {"GetItem"};
 
         private readonly IOrganizationService _organizationService;
-        private readonly IState _state;
         private readonly ILogger<GetItemAction> _logger;
 
         public GetItemAction(
             IExpressionEngine expressionEngine,
             OrganizationServiceContext organizationServiceContext,
-            IState state,
             ILogger<GetItemAction> logger) : base(expressionEngine)
         {
             _organizationService = organizationServiceContext?.GetOrganizationService() ??
                                    throw new ArgumentNullException(nameof(organizationServiceContext));
-            _state = state ?? throw new ArgumentNullException(nameof(state));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public override Task<ActionResult> Execute()
         {
+            var result = new ActionResult();
             var entity = new Entity();
             entity.CreateEntityFromParameters(Parameters);
 
@@ -52,8 +50,8 @@ namespace PAMU_CDS.Actions
 
                 var response = (RetrieveResponse) _organizationService.Execute(retrieveRequest);
 
-
-                _state.AddOutputs(ActionName, response.Entity.ToValueContainer());
+                result.ActionOutput = response.Entity.ToValueContainer();
+                result.ActionStatus = ActionStatus.Succeeded;
             }
             catch (InvalidPluginExecutionException exp)
             {
@@ -74,7 +72,7 @@ namespace PAMU_CDS.Actions
                     {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
 
-            return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});
+            return Task.FromResult(result);
         }
 
         private RelationshipQueryCollection GetExpandedEntities(string entityName)

@@ -14,21 +14,19 @@ namespace PAMU_CDS.Actions
         public static readonly string[] OperationId = {"CreateRecord"};
 
         private readonly IOrganizationService _organizationService;
-        private readonly IState _state;
 
         public CreateRecordAction(
             IExpressionEngine expressionEngine,
-            OrganizationServiceContext organizationServiceContext,
-            IState state) : base(
+            OrganizationServiceContext organizationServiceContext) : base(
             expressionEngine)
         {
-            _organizationService = organizationServiceContext?.GetOrganizationService() ?? 
+            _organizationService = organizationServiceContext?.GetOrganizationService() ??
                                    throw new ArgumentNullException(nameof(organizationServiceContext));
-            _state = state ?? throw new ArgumentNullException(nameof(state));
         }
 
         public override Task<ActionResult> Execute()
         {
+            var result = new ActionResult();
             var entity = new Entity();
             entity = entity.CreateEntityFromParameters(Parameters);
 
@@ -37,7 +35,8 @@ namespace PAMU_CDS.Actions
                 entity.Id = _organizationService.Create(entity);
 
                 var retrievedEntity = _organizationService.Retrieve(entity.LogicalName, entity.Id, new ColumnSet(true));
-                _state.AddOutputs(ActionName, retrievedEntity.ToValueContainer());
+                result.ActionOutput = retrievedEntity.ToValueContainer();
+                result.ActionStatus = ActionStatus.Succeeded;
             }
             catch (InvalidPluginExecutionException exp)
             {
@@ -46,7 +45,7 @@ namespace PAMU_CDS.Actions
                     {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
 
-            return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});
+            return Task.FromResult(result);
         }
     }
 }
