@@ -2,7 +2,7 @@
 <h2 align="center">Power Automate MockUp</h2>
 <h3 align="center">Battery included mock to mock Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a> as skeleton and <a href="http://github.com/delegateas/XrmMockup">XrmMockup</a> as Dynamics Mock.</h3>
 <p align="center">
-        <img alt="Build status" src="https://img.shields.io/github/workflow/status/thygesteffensen/PAMU_CDS/Build">
+        <img alt="Build status" src="https://img.shields.io/github/workflow/status/thygesteffensen/PAMU_CDS/Release/dev">
     <a href="https://www.nuget.org/packages/PAMU_CDSce/">
         <img alt="Nuget downloads" src="https://img.shields.io/nuget/dt/PAMU_CDSce">
     </a>
