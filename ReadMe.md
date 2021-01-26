@@ -39,7 +39,9 @@ _pamuCds = sp.GetRequiredService<XrmMockupCdsTrigger>();
 _pamuCds.AddFlows(new Uri(System.IO.Path.GetFullPath(@"Workflows")));
 ```
 
-That's all. Now you can run your unit tests and the action executed in Power Automate flow will also be executed now, against your mock instance.
+That's all. The flows in the folder will be executed like they would on the server and the actions will be triggered from XrmMockup.
+
+ Now you can run your unit tests and the action executed in Power Automate flow will also be executed now, against your mock instance.
 
 ### Download flows
 One way to get the flows, is to Export the soltuion containing the flows, then unzip and extract the flows to the desired location.
