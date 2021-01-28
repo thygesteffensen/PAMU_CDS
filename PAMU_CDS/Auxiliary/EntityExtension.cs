@@ -96,6 +96,9 @@ namespace PAMU_CDS.Auxiliary
                         dict[$"{kvp.Key}@odata.type"] = new ValueContainer("#Date");
                     dict[kvp.Key] = new ValueContainer(dateTime.ToString());
                     break;
+                case Money money:
+                    dict[kvp.Key] = new ValueContainer((float) money.Value);
+                    break;
                 default:
                     throw new NotImplementedException();
                 // throw new ArgumentOutOfRangeException();
