@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="PowerAutomateMockUp" Version="1.0.0-alpha.33" />
+        <PackageReference Include="PowerAutomateMockUp" Version="1.0.0-alpha.34" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Debug' And '$(TargetFramework)' == 'net462'">
