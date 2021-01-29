@@ -283,7 +283,8 @@ namespace PAMU_CDS.Auxiliary
                 "startswith" => new ConditionExpression(_attribute, ConditionOperator.BeginsWith, _value),
                 "endswith" => new ConditionExpression(_attribute, ConditionOperator.EndsWith, _value),
                 "substringof" => new ConditionExpression(_attribute, ConditionOperator.Contains, _value),
-                _ => throw new NotImplementedException($"{_function} is not yet supported...")
+                "contains" => new ConditionExpression(_attribute, ConditionOperator.Contains,_value),
+                _ => throw new NotImplementedException($"{_function} is not yet supported in ODataFilter expression parser...")
             };
         }
     }
