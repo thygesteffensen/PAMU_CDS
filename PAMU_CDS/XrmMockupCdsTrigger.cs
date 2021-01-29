@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using IXrmMockupExtension;
+using DG.Tools.XrmMockup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,7 +15,7 @@ using Parser.FlowParser;
 
 namespace PAMU_CDS
 {
-    public class XrmMockupCdsTrigger : IMockUpExtension
+    public class XrmMockupCdsTrigger : IXrmMockupExtension
     {
         private readonly ILogger<XrmMockupCdsTrigger> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
