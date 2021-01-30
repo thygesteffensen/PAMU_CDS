@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Moq;
 using Newtonsoft.Json.Linq;
 using PAMU_CDS.Actions;
-using Parser;
+using PAMU_CDS.Auxiliary;
 using Parser.ExpressionParser;
 using Parser.FlowParser.ActionExecutors;
 
@@ -23,7 +23,6 @@ namespace Test.UnitTest
             var loggerMock = new Mock<ILogger<GetItemAction>>();
 
             RetrieveRequest retrieveRequest = null;
-            ValueContainer outputValueContainer = null;
             var guid = Guid.NewGuid();
 
             var orgServiceMock = new Mock<IOrganizationService>();
@@ -38,16 +37,12 @@ namespace Test.UnitTest
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
 
-            var stateMock = new Mock<IState>();
-            stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
-                .Callback<string, ValueContainer>((actionName, valueContainer) =>
-                {
-                    outputValueContainer = valueContainer;
-                });
-
+            var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
+            
             var createActionExecutor =
-                new GetItemAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object,
+                new GetItemAction(expressionEngineMock.Object, fa,
                     loggerMock.Object);
 
             var actionDescription =
@@ -70,7 +65,7 @@ namespace Test.UnitTest
             Assert.IsNull(retrieveRequest.RelatedEntitiesQuery);
             
             
-            Assert.IsNotNull(outputValueContainer);
+            Assert.IsNotNull(response.ActionOutput);
 
             Assert.AreEqual(ActionStatus.Succeeded, response.ActionStatus);
             Assert.AreEqual(true, response.ContinueExecution);
@@ -84,8 +79,6 @@ namespace Test.UnitTest
             var columns = new[] {"firstname", "lastname", "address1_name"};
 
             RetrieveRequest retrieveRequest = null;
-            string outputActionName = null;
-            ValueContainer outputValueContainer = null;
 
             var loggerMock = new Mock<ILogger<GetItemAction>>();
 
@@ -118,17 +111,12 @@ namespace Test.UnitTest
 
             var expressionEngineMock = new Mock<IExpressionEngine>();
             expressionEngineMock.Setup(x => x.Parse(It.IsAny<string>())).Returns<string>(input => input);
+            expressionEngineMock.Setup(x => x.ParseToValueContainer(It.IsAny<string>())).Returns<string>((input) => new ValueContainer(input));
 
-            var stateMock = new Mock<IState>();
-            stateMock.Setup(x => x.AddOutputs(It.IsAny<string>(), It.IsAny<ValueContainer>()))
-                .Callback<string, ValueContainer>((actionName, valueContainer) =>
-                {
-                    outputActionName = actionName;
-                    outputValueContainer = valueContainer;
-                });
-
+            var fa = new OrganizationServiceContext {OrganizationService = orgServiceMock.Object};
+            
             var createActionExecutor =
-                new GetItemAction(expressionEngineMock.Object, orgServiceMock.Object, stateMock.Object,
+                new GetItemAction(expressionEngineMock.Object, fa,
                     loggerMock.Object);
 
             var actionDescription =
@@ -156,10 +144,8 @@ namespace Test.UnitTest
             
             
 
-            Assert.IsNotNull(outputActionName);
-            Assert.IsNotNull(outputValueContainer);
-            Assert.AreEqual("GetContact", outputActionName);
-            var body = outputValueContainer["body"].GetValue<Dictionary<string, ValueContainer>>();
+            Assert.IsNotNull(response.ActionOutput);
+            var body = response.ActionOutput["body"].GetValue<Dictionary<string, ValueContainer>>();
 
             Assert.IsTrue(body.ContainsKey("firstname"));
             Assert.IsTrue(body.ContainsKey("address1_name"));

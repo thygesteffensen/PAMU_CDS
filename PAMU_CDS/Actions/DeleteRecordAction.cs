@@ -9,12 +9,16 @@ namespace PAMU_CDS.Actions
 {
     public class DeleteRecordAction : OpenApiConnectionActionExecutorBase
     {
+        public static readonly string[] OperationId = {"CreateRecord"};
+        
         private readonly IOrganizationService _organizationService;
 
-        public DeleteRecordAction(IExpressionEngine expressionEngine, IOrganizationService organizationService) : base(
-            expressionEngine)
+        public DeleteRecordAction(
+            IExpressionEngine expressionEngine, 
+            OrganizationServiceContext organizationServiceContext) : base(expressionEngine)
         {
-            _organizationService = organizationService ?? throw new ArgumentNullException(nameof(organizationService));
+            _organizationService = organizationServiceContext?.GetOrganizationService() ?? 
+                                   throw new ArgumentNullException(nameof(organizationServiceContext));
         }
 
         public override Task<ActionResult> Execute()
@@ -26,10 +30,11 @@ namespace PAMU_CDS.Actions
             {
                 _organizationService.Delete(entity.LogicalName, entity.Id);
             }
-            catch (InvalidPluginExecutionException)
+            catch (InvalidPluginExecutionException exp)
             {
                 // We need to do some experiments on how the error handling works. Take a look at one of your customers.
-                return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Failed});
+                return Task.FromResult(new ActionResult
+                    {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
 
             return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});

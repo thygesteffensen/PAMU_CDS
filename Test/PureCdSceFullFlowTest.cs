@@ -12,9 +12,9 @@ namespace Test
         {
             // Black box test
             var contact = new Entity("contact");
-            
+
             contact.Id = OrgAdminService.Create(contact);
-            
+
             var retrievedContact = OrgAdminService.Retrieve(contact.LogicalName, contact.Id, new ColumnSet("jobtitle"));
 
             Assert.IsNotNull(retrievedContact);

@@ -40,7 +40,7 @@ namespace PAMU_CDS.Auxiliary
             foreach (var keyValuePair in entity.Attributes)
             {
                 AddObjectToValueContainer(triggerOutputs, keyValuePair);
-                
+
                 triggerOutputs["@odata.type"] = new ValueContainer($"#Microsoft.Dynamics.CRM.{entity.LogicalName}");
             }
 
@@ -72,6 +72,9 @@ namespace PAMU_CDS.Auxiliary
                 case double d:
                     dict[kvp.Key] = new ValueContainer((float) d);
                     break;
+                case decimal d:
+                    dict[kvp.Key] = new ValueContainer((float) d);
+                    break;
                 case Guid guid:
                     dict[$"{kvp.Key}@odata.type"] = new ValueContainer("#Guid");
                     dict[kvp.Key] = new ValueContainer(guid.ToString());
@@ -92,6 +95,9 @@ namespace PAMU_CDS.Auxiliary
                     dict[$"{kvp.Key}"] =
                         dict[$"{kvp.Key}@odata.type"] = new ValueContainer("#Date");
                     dict[kvp.Key] = new ValueContainer(dateTime.ToString());
+                    break;
+                case Money money:
+                    dict[kvp.Key] = new ValueContainer((float) money.Value);
                     break;
                 default:
                     throw new NotImplementedException();

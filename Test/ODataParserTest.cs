@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PAMU_CDS;
+using PAMU_CDS.Auxiliary;
 
 namespace Test
 {

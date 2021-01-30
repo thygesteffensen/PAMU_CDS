@@ -16,23 +16,24 @@ namespace PAMU_CDS.Actions
 {
     public class GetItemAction : OpenApiConnectionActionExecutorBase
     {
+        public static readonly string[] OperationId = {"GetItem"};
+
         private readonly IOrganizationService _organizationService;
-        private readonly IState _state;
         private readonly ILogger<GetItemAction> _logger;
 
         public GetItemAction(
             IExpressionEngine expressionEngine,
-            IOrganizationService organizationService,
-            IState state,
+            OrganizationServiceContext organizationServiceContext,
             ILogger<GetItemAction> logger) : base(expressionEngine)
         {
-            _organizationService = organizationService ?? throw new ArgumentNullException(nameof(organizationService));
-            _state = state ?? throw new ArgumentNullException(nameof(state));
+            _organizationService = organizationServiceContext?.GetOrganizationService() ??
+                                   throw new ArgumentNullException(nameof(organizationServiceContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public override Task<ActionResult> Execute()
         {
+            var result = new ActionResult();
             var entity = new Entity();
             entity.CreateEntityFromParameters(Parameters);
 
@@ -49,12 +50,13 @@ namespace PAMU_CDS.Actions
 
                 var response = (RetrieveResponse) _organizationService.Execute(retrieveRequest);
 
-
-                _state.AddOutputs(ActionName, response.Entity.ToValueContainer());
+                result.ActionOutput = response.Entity.ToValueContainer();
+                result.ActionStatus = ActionStatus.Succeeded;
             }
-            catch (InvalidPluginExecutionException)
+            catch (InvalidPluginExecutionException exp)
             {
-                return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Failed});
+                return Task.FromResult(new ActionResult
+                    {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
             catch (Exception exp) // MockupException
             {
@@ -65,20 +67,22 @@ namespace PAMU_CDS.Actions
                         $"0x0 | Could not find a property named '{messageDivided[1]}' on type 'Microsoft.Dynamics.CRM.{messageDivided[3]}'",
                         exp);
                 }
+
+                return Task.FromResult(new ActionResult
+                    {ActionStatus = ActionStatus.Failed, ActionExecutorException = exp});
             }
 
-            return Task.FromResult(new ActionResult {ActionStatus = ActionStatus.Succeeded});
+            return Task.FromResult(result);
         }
 
         private RelationshipQueryCollection GetExpandedEntities(string entityName)
         {
             var paras = Parameters.GetValue<Dictionary<string, ValueContainer>>();
             if (!paras.ContainsKey("$expand")) return null;
-            
+
             var t = new RelationshipQueryCollection();
 
             var p = new OdataParser();
-            // TODO: Refactor with version alpha.18
             var expand = p.Get(Parameters["$expand"].GetValue<string>());
 
 
@@ -121,7 +125,6 @@ namespace PAMU_CDS.Actions
         private ColumnSet BuildColumnSet()
         {
             var columnSet = new ColumnSet();
-            // TODO: Refactor with version alpha.18
             var paras = Parameters.GetValue<Dictionary<string, ValueContainer>>();
             if (!paras.ContainsKey("$select"))
             {

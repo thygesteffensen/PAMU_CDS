@@ -4,26 +4,58 @@
         <TargetFrameworks>net48;net462</TargetFrameworks>
 
         <IsPackable>false</IsPackable>
+
+        <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.28" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+<!--        <PackageReference Include="bd1fe5ca33fd455dafb99d34768b8de4" Version="1.3.3-dev.10.0" />-->
+        <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.29" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
         <PackageReference Include="Moq" Version="4.15.2" />
-        <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
-        <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
-        <PackageReference Include="coverlet.collector" Version="1.2.0" />
-        <PackageReference Include="XrmMockup365" Version="1.3.3-dev.2.0" />
+        <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
+        <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+        <PackageReference Include="coverlet.collector" Version="1.3.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="XrmMockup365" Version="1.7.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PAMU_CDS\PAMU_CDS.csproj" />
+        <ProjectReference Include="..\PAMU_CDS\PAMU_CDS.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="TestFlows\Pure_CDS_ce.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="TestFlows\Pure_CDS_ce.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestFlows\Single_Custom_Action.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestFlows\Single_Custom_ActionNonCdsTrigger.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestFlows\Every_CDS_ce_action.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <PackageReference Include="PowerAutomateMockUp" Version="1.0.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug' And '$(TargetFramework)' == 'net462'">
+        <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net462\PowerAutomateMockUp.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug' And '$(TargetFramework)' == 'net48'">
+        <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net48\PowerAutomateMockUp.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    
 </Project>

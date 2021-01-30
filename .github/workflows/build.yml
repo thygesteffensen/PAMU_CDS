@@ -1,0 +1,63 @@
+﻿name: Build
+
+on:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+
+jobs:
+  test:
+    runs-on: windows-latest
+    name: Testing
+    steps:
+      - name: Checkout code base
+        uses: actions/checkout@v2
+
+#      - name: Add nuget Source
+#        env:
+#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+#        run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
+#
+#      - name: Set Github nuget API
+#        env:
+#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+#        run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+
+      - name: Run tests
+        run: dotnet test --verbosity normal --configuration Release
+
+  build:
+    runs-on: windows-latest
+    name: Building
+    steps:
+      - name: Checkout code base
+        uses: actions/checkout@v2
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
+#      - name: Add nuget Source
+#        env:
+#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+#        run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
+#
+#      - name: Set Github nuget API
+#        env:
+#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+#        run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+
+      - name: Restore NuGet packages
+        run: dotnet restore PAMU_CDS.sln /p:Configuration=Release
+
+      - name: Run tests
+        run: dotnet test --verbosity normal --configuration Release
+
+      - name: Build solution
+        run: msbuild /p:OutputPath=../build /p:Configuration=Release /p:RestorePackages=false
+
+      - name: Archive build to artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: |
+            build/PAMU_CDS.dll   
+          retention-days: 5

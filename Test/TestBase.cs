@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using DG.Tools.XrmMockup;
-using IXrmMockupExtension;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
 using PAMU_CDS;
+using Parser;
 
 namespace Test
 {
@@ -18,7 +19,7 @@ namespace Test
         protected IOrganizationService OrgAdminUiService;
         protected IOrganizationService OrgAdminService;
         protected static XrmMockup365 Crm;
-        protected static CommonDataServiceCurrentEnvironment _pamuCds;
+        protected static XrmMockupCdsTrigger _pamuCds;
 
         public TestBase()
         {
@@ -37,10 +38,20 @@ namespace Test
         [AssemblyInitialize]
         public static void InitializeServices(TestContext context)
         {
-            _pamuCds = new CommonDataServiceCurrentEnvironment(new Uri(TestFlowPath));
+            var services = new ServiceCollection();
+            services.AddFlowRunner();
+            services.AddPamuCds();
 
-            // Figure out how to get all json
+            services.Configure<CdsFlowSettings>(x => x.DontExecuteFlows = new[] {"Every_CDS_ce_action.json"});
+            
+            services.AddFlowActionByName<ManualActionExecutor>("Post_a_notification_using_non_existing_provider");
 
+            var sp = services.BuildServiceProvider();
+
+            _pamuCds = sp.GetRequiredService<XrmMockupCdsTrigger>();
+            
+            _pamuCds.AddFlows(new Uri(TestFlowPath));
+            
             InitializeMockup(context);
         }
 
@@ -53,7 +64,7 @@ namespace Test
                 CodeActivityInstanceTypes = new Type[] { },
                 EnableProxyTypes = true,
                 IncludeAllWorkflows = true,
-                MockUpExtensions = new List<IMockUpExtension> {_pamuCds}
+                MockUpExtensions = new List<IXrmMockupExtension> {_pamuCds}
             });
         }
     }
