@@ -1,6 +1,6 @@
 <h1 align="center">Common Data Service (current environment) mock</h1>
-<h2 align="center">Power Automate MockUp</h2>
-<h3 align="center">Battery included mock to mock Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a> as skeleton and <a href="http://github.com/delegateas/XrmMockup">XrmMockup</a> as Dynamics Mock.</h3>
+<h2 align="center"><a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a></h2>
+<h3 align="center">Battery included mock for Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a> as skeleton and <a href="http://github.com/delegateas/XrmMockup">XrmMockup</a> as Dynamics engine.</h3>
 <p align="center">
         <img alt="Build status" src="https://img.shields.io/github/workflow/status/thygesteffensen/PAMU_CDS/Release/dev">
     <a href="https://www.nuget.org/packages/PAMU_CDSce/">
@@ -9,8 +9,8 @@
     <a href="https://www.nuget.org/packages/PAMU_CDSce/">
         <img alt="Nuget version" src="https://img.shields.io/nuget/v/PAMU_CDSce">
     </a>
-    <!--<a href="https://www.nuget.org/packages/PAMU_CDSce/">
-        <img alt="Nuget prerelease version" src="https://img.shields.io/nuget/vpre/PowerAutomateMockUp">-->
+    <a href="https://www.nuget.org/packages/PAMU_CDSce/">
+        <img alt="Nuget prerelease version" src="https://img.shields.io/nuget/vpre/PAMU_CDSce">
     </a>
 </p>
 
@@ -20,7 +20,7 @@ The mock is build using [Power Automate Mockup](https://github.com/thygesteffens
 
 ## Getting Started
 
-First of all, replace your XrmMockup dependency with the [development version](https://www.nuget.org/packages/bd1fe5ca33fd455dafb99d34768b8de4/) developed to this project. The development version is build on the latest version of XrmMockup.
+First of all, replace your XrmMockup with version [1.7.1](https://www.nuget.org/packages/XrmMockup365/) or higher.
 
 When configuring XrmMockup, add the following to the `XrmMockupSettings` when configuring your `XrmMockup365` instance:
 ```c#
