@@ -46,7 +46,7 @@ jobs:
 #        run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
 
       - name: Restore NuGet packages
-        run: nuget restore PAMU_CDS.sln /p:Configuration=Release
+        run: dotnet restore PAMU_CDS.sln /p:Configuration=Release
 
       - name: Run tests
         run: dotnet test --verbosity normal --configuration Release
