@@ -41,10 +41,21 @@
         </None>
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net48\PowerAutomateMockUp.dll</HintPath>
-      </Reference>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <PackageReference Include="PowerAutomateMockUp" Version="1.0.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug' And '$(TargetFramework)' == 'net462'">
+        <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net462\PowerAutomateMockUp.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug' And '$(TargetFramework)' == 'net48'">
+        <Reference Include="PowerAutomateMockUp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\..\..\PowerAutomateMockUp\PowerAutomateMockUp\bin\Debug\net48\PowerAutomateMockUp.dll</HintPath>
+        </Reference>
     </ItemGroup>
     
 </Project>
