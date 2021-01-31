@@ -1,6 +1,6 @@
 <h1 align="center">Common Data Service (current environment) mock</h1>
-<h2 align="center"><a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a></h2>
-<h3 align="center">Battery included mock for Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate MockUp</a> as skeleton and <a href="http://github.com/delegateas/XrmMockup">XrmMockup</a> as Dynamics engine.</h3>
+<h2 align="center"><a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate Mock-Up</a></h2>
+<h3 align="center">Battery included mock for Power Automate CDS connector. Using <a href="https://github.com/thygesteffensen/PowerAutomateMockUp">Power Automate Mock-Up</a> as the flow engine and <a href="http://github.com/delegateas/XrmMockup">XrmMockup</a> as Dynamics engine.</h3>
 <p align="center">
         <img alt="Build status" src="https://img.shields.io/github/workflow/status/thygesteffensen/PAMU_CDS/Release/dev">
     <a href="https://www.nuget.org/packages/PAMU_CDSce/">
@@ -16,18 +16,18 @@
 
 This is a full featured mock for the [Common Date Service (current environment)](https://docs.microsoft.com/en-us/connectors/commondataserviceforapps/) connector for Power Automate.
 
-The mock is build using [Power Automate Mockup](https://github.com/thygesteffensen/PowerAutomateMockup) as the flow engine and [XrmMockup](https://github.com/delegateas/XrmMockup) to mock the underlying Dynamics 365.
+The mock is built using [Power Automate Mock-Up](https://github.com/thygesteffensen/PowerAutomateMockup) as the flow engine and [XrmMockup](https://github.com/delegateas/XrmMockup) to mock the underlying Dynamics 365 instance.
 
 ## Getting Started
 
-First of all, replace your XrmMockup with version [1.7.1](https://www.nuget.org/packages/XrmMockup365/) or higher.
+First of all, upgrade your XrmMockup with version [1.7.1](https://www.nuget.org/packages/XrmMockup365/) or higher.
 
-When configuring XrmMockup, add the following to the `XrmMockupSettings` when configuring your `XrmMockup365` instance:
+When configuring XrmMockup, add the following to the `XrmMockupSettings` (Only supported in XrmMockup365):
 ```c#
 MockUpExtensions = new List<IMockUpExtension> {_pamuCds}
 ```
 
-Somewhere before the XrmMockup configure step, do the following to setup PAMU and add PAMU_CDS to the service collection:
+Somewhere before the XrmMockup configure step, do the following to setup Power Automate Mock-Up and add PAMU_CDS to the service collection:
 ```c#
 var services = new ServiceCollection();
 services.AddFlowRunner();
@@ -41,14 +41,14 @@ _pamuCds.AddFlows(new Uri(System.IO.Path.GetFullPath(@"Workflows")));
 
 That's all. The flows in the folder will be executed like they would on the server and the actions will be triggered from XrmMockup.
 
- Now you can run your unit tests and the action executed in Power Automate flow will also be executed now, against your mock instance.
+Now you can run your unit tests and the action executed in Power Automate flow will also be executed now, against your mock instance.
 
 ### Download flows
-One way to get the flows, is to Export the soltuion containing the flows, then unzip and extract the flows to the desired location.
+One way to get the flows, is to export the soltuion containing the flows, then unzip and extract the flows to the desired location.
 
-If you are using [XrmFramework](https://github.com/delegateas/XrmFramework) or if you're using [Daxif](https://github.com/delegateas/Daxif), you can execute the `F#` availible at [Download flows script](https://github.com/thygesteffensen/FlowUnitTester/blob/main/DG/DG.FlowUnitTester/Tools/Daxif/DownloadWorkflows.fsx).
+If you are using [XrmFramework](https://github.com/delegateas/XrmFramework) or if you're using [Daxif](https://github.com/delegateas/Daxif), you can execute the `F#` script availible [here](https://github.com/thygesteffensen/FlowUnitTester/blob/main/DG/DG.FlowUnitTester/Tools/Daxif/DownloadWorkflows.fsx).
 
-Depending on the location of the flows, they might have to be included in the `.csproj`. If the flows are placed in a directory inside the test project, in a folder named `flows`, simply add the following `ItemGroup`, to copy the flows:
+Depending on the location of the flows, they might have to be included in the `.csproj`. If the flows are placed in a directory inside the test project, in a folder named `flows`, simply add the following `ItemGroup`, to copy the flows when building:
 
 ```xml
 <ItemGroup>
@@ -59,7 +59,7 @@ Depending on the location of the flows, they might have to be included in the `.
 ```
 
 ### Configuring
-Like PAMU, PAMU_CDS also has options for configuration.
+PAMU_CDS can be configured to behave in a certain way. PAMU can also be configured, see [here](https://github.com/thygesteffensen/PowerAutomateMockUp#configuration)
 
 #### Do not execute flows
 Add the name of the flow description file, to ignore the flow when triggering from flow from XrmMockup.
@@ -71,7 +71,22 @@ services.Configure<CdsFlowSettings>(x =>
 
 ## Actions
 
-The focus right now is create a MVP to use in my bachelor project, this meaning not all functions will be implemented at the moment. I will later create a description of how to contribute to this project, but not before the assignment have been handed in.
+The focus right now is to create an MVP to use in my bachelor project, thus not all functions will be implemented for the moment. I will later create a description of how to contribute to this project, but not before the assignment have been handed in.
+
+|    | **Action**|
+|----|----------|
+| ✔ | [Create a new record](#create-a-new-record-)
+| ✔ | [Delete a record](#delete-a-record-)
+| ❗ | [Execute a changeset request](#executes-a-changeset-request-)
+| ❗ | [Get a record](#get-a-record-)
+| ❌ | [Get file or image content](#get-file-or-image-content-)
+| ❗ | [List records](#list-records-)
+| ❗ | [Perform a bound action](#perform-a-bound-action-)
+| ❗ | [Perform a unbound action](#perform-an-unbound-action-)
+| ✔ | [Releate records](#relate-records-)
+| ✔ | [Unrelate records](#unrelate-records-)
+| ✔ | [Update a record](#update-record-)
+| ❌ | [Upload file or image content](#upload-file-or-image-content-)
 
 ### Unsupported actions
 As with [PAMU](https://github.com/thygesteffensen/PowerAutomateMockup), you can add actions using one of the three extension methods
@@ -213,6 +228,11 @@ Action is not implemented and will not be implemented in the near future.
 ### Upload file or image content ❌
 Action is not implemented and will not be implemented in the near future.
 
+## Trigger
+
+XrmMockupCdsTrigger is a class to trigger a set of flows, based on the Request made to Dynamics. XrmMockupCdsTrigger is built to be used togehter with XrmMockup.
+
+The trigger will apply a filters from the trigger, but only with limited functionality for now.
 
 ## Code style
 The code is written using [Riders](https://www.jetbrains.com/help/rider/Settings_Code_Style_CSHARP.html) default C# code style.

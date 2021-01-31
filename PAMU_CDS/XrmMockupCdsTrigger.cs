@@ -81,8 +81,8 @@ namespace PAMU_CDS
             _logger.LogInformation("Async Trigger event occured");
             if (!new[] {"Create", "Delete", "Update"}.Contains(request.RequestName))
             {
-                throw new InvalidOperationException(
-                    $"PAMU_CDS does not support the request: {request.RequestName}.");
+                _logger.LogInformation("{RequestName} is not supported - no action performed", request.RequestName);
+                return;
             }
 
             using var scope = _scopeFactory.CreateScope();
