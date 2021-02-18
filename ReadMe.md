@@ -259,4 +259,4 @@ Delegate A/S and the team behind XrmMockup.
 
 ## License
 
-© Thyge Skødt Steffensen
+MIT
