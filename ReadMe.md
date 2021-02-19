@@ -243,7 +243,7 @@ Commits are written in [conventional commit](https://www.conventionalcommits.org
 
 Currently the project is still in alpha. To find the packages at nuget.com, you have to check 'Prerelease', before the nuget appears.
 
-You also need a modified version of [XrmMockup](https://github.com/delegateas/XrmMockup), you can find that [here]()
+You also need [XrmMockup](https://github.com/delegateas/XrmMockup) to get the full functionality togehter with Dynamics 365 customizations. If you don't use XrmMockup or don't want to, you can provide a mock of IOrganizationService and add it to the service collection.
 
 ## Tests
 
