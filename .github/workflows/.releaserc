@@ -1,0 +1,19 @@
+﻿branches:
+  - name: main
+  - name: dev
+    prerelease: alpha
+
+plugins:
+  - - "@semantic-release/commit-analyzer"
+    - preset: conventionalcommits
+
+  - - "@semantic-release/release-notes-generator"
+    - preset: conventionalcommits
+
+  - - "@semantic-release/github"
+    - assets:
+        - path: ../../artifacts/PAMU_CDS.*.nupkg
+          label: PAMU CDS DLL
+
+  - - "@semantic-release/exec"
+    - publishCmd: "dotnet nuget push ..\\..\\artifacts\\PAMU_CDSce.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${process.env.CI_NUGET_API_KEY}"
