@@ -16,16 +16,16 @@
 
     <ItemGroup>
         <!--<FrameworkReference Include="Microsoft.AspNetCore.App" />-->
-        <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.29"/>
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-        <PackageReference Include="Sprache" Version="2.3.1"/>
-        <PackageReference Include="XrmMockup365" Version="1.7.1"/>
-        <PackageReference Include="PowerAutomateMockUp" Version="2.0.0"/>
+        <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.29" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Sprache" Version="2.3.1" />
+        <PackageReference Include="XrmMockup365" Version="1.12.1" />
+        <PackageReference Include="PowerAutomateMockUp" Version="2.0.0-alpha.2" />
     </ItemGroup>
     
 </Project>
