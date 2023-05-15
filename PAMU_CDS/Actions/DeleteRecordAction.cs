@@ -9,7 +9,7 @@ namespace PAMU_CDS.Actions
 {
     public class DeleteRecordAction : OpenApiConnectionActionExecutorBase
     {
-        public static readonly string[] OperationId = {"CreateRecord"};
+        public static readonly string[] OperationId = {"DeleteRecord"};
         
         private readonly IOrganizationService _organizationService;
 

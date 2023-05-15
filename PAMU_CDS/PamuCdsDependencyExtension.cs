@@ -31,9 +31,6 @@ namespace PAMU_CDS
 
             services.AddFlowActionByApiIdAndOperationsName<DisAndAssociateEntitiesAction>(apiId,
                 DisAndAssociateEntitiesAction.OperationId);
-
-            services.AddFlowActionByApiIdAndOperationsName<ScopeActionExecutor>(apiId,
-                new[] {"ExecuteChangeset"});
         }
     }
 }
