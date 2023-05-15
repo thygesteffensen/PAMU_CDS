@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Microsoft.Xrm.Sdk.Query;
 using Sprache;
 
@@ -30,6 +32,18 @@ namespace PAMU_CDS.Auxiliary
             Parse.AnyChar.Or(Parse.Char(' ')).Except(Parse.Char('\'')).AtLeastOnce().Text().Select(x => x)
                 .Contained(Quote, Quote);
 
+        private static readonly Parser<Guid> GuidValue =
+            from n1 in Parse.AnyChar.Except(Parse.Char('-')).Repeat(8)
+            from dash1 in Parse.Char('-')
+            from n2 in Parse.AnyChar.Except(Parse.Char('-')).Repeat(4)
+            from dash2 in Parse.Char('-')
+            from n3 in Parse.AnyChar.Except(Parse.Char('-')).Repeat(4)
+            from dash3 in Parse.Char('-')
+            from n4 in Parse.AnyChar.Except(Parse.Char('-')).Repeat(4)
+            from dash4 in Parse.Char('-')
+            from n5 in Parse.AnyChar.Except(Parse.Char('-')).Repeat(12)
+            select Guid.Parse($"{string.Concat(n1)}-{string.Concat(n2)}-{string.Concat(n3)}-{string.Concat(n4)}-{string.Concat(n5)}");
+
         private static readonly Parser<decimal> Decimal =
             (
                 from n in Parse.Number
@@ -44,7 +58,7 @@ namespace PAMU_CDS.Auxiliary
                 .Or(Parse.String("false").Select(x => false));
 
         private static readonly Parser<object> Null =
-            Parse.String("null").Select(x => (object) null);
+            Parse.String("null").Select(x => (object)null);
 
         private static readonly Parser<ConditionOperator> Equal =
             Parse.String("eq").Return(ConditionOperator.Equal);
@@ -86,24 +100,29 @@ namespace PAMU_CDS.Auxiliary
                 .Or(Func)
                 .Or
                 (from attr in SimpleString
-                    from op in Operators.Contained(Space, Space)
-                    from val in Null
-                    select new Statement(attr, op, null))
+                 from op in Operators.Contained(Space, Space)
+                 from val in Null
+                 select new Statement(attr, op, null))
                 .Or
                 (from attr in SimpleString
-                    from op in Operators.Contained(Space, Space)
-                    from val in StringValue
-                    select new Statement(attr, op, val))
+                 from op in Operators.Contained(Space, Space)
+                 from val in StringValue
+                 select new Statement(attr, op, val))
                 .Or
                 (from attr in SimpleString
-                    from op in Operators.Contained(Space, Space)
-                    from val in Bool
-                    select new Statement(attr, op, val))
+                 from op in Operators.Contained(Space, Space)
+                 from val in Bool
+                 select new Statement(attr, op, val))
                 .Or
                 (from attr in SimpleString
-                    from op in Operators.Contained(Space, Space)
-                    from val in Decimal
-                    select new Statement(attr, op, val));
+                 from op in Operators.Contained(Space, Space)
+                 from val in GuidValue
+                 select new Statement(attr, op, val))
+                .Or
+                (from attr in SimpleString
+                 from op in Operators.Contained(Space, Space)
+                 from val in Decimal
+                 select new Statement(attr, op, val));
 
 
         private static readonly Parser<INode> AndGroup =
@@ -122,7 +141,7 @@ namespace PAMU_CDS.Auxiliary
         {
             return AndGroup.Parse(input) switch
             {
-                Leaf l => new FilterExpression {FilterOperator = LogicalOperator.And, Conditions = {l.ToCondition()}},
+                Leaf l => new FilterExpression { FilterOperator = LogicalOperator.And, Conditions = { l.ToCondition() } },
                 Branch b => FilterExpression(b),
                 _ => null
             };
@@ -130,7 +149,7 @@ namespace PAMU_CDS.Auxiliary
 
         private static FilterExpression FilterExpression(Branch b)
         {
-            var filter = new FilterExpression {FilterOperator = b.Operator};
+            var filter = new FilterExpression { FilterOperator = b.Operator };
 
             switch (b.RightSide)
             {
@@ -242,7 +261,7 @@ namespace PAMU_CDS.Auxiliary
 
             if (value % 1 == 0)
             {
-                Value = (int) value;
+                Value = (int)value;
             }
             else
             {
@@ -250,16 +269,30 @@ namespace PAMU_CDS.Auxiliary
             }
         }
 
+        public Statement(string attribute, ConditionOperator op, Guid value)
+        {
+            Attribute = attribute;
+            Op = op;
+            Value = value;
+        }
+
         public override ConditionExpression ToCondition()
         {
+            var matchLookup = Regex.Match(Attribute, @"(?<=_)(.*)(?=_value)");
+
+            var attribute =
+                matchLookup.Success
+                ? matchLookup.Value
+                : Attribute;
+
             if (Value == null)
             {
-                return new ConditionExpression(Attribute, Op == ConditionOperator.Equal
+                return new ConditionExpression(attribute, Op == ConditionOperator.Equal
                     ? ConditionOperator.Null
                     : ConditionOperator.NotNull);
             }
 
-            return new ConditionExpression(Attribute, Op, Value);
+            return new ConditionExpression(attribute, Op, Value);
         }
     }
 
@@ -283,7 +316,7 @@ namespace PAMU_CDS.Auxiliary
                 "startswith" => new ConditionExpression(_attribute, ConditionOperator.BeginsWith, _value),
                 "endswith" => new ConditionExpression(_attribute, ConditionOperator.EndsWith, _value),
                 "substringof" => new ConditionExpression(_attribute, ConditionOperator.Contains, _value),
-                "contains" => new ConditionExpression(_attribute, ConditionOperator.Contains,_value),
+                "contains" => new ConditionExpression(_attribute, ConditionOperator.Contains, _value),
                 _ => throw new NotImplementedException($"{_function} is not yet supported in ODataFilter expression parser...")
             };
         }
