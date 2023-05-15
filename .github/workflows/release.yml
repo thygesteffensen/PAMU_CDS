@@ -71,5 +71,5 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: PAMU CDS DLL
-          path: ../artifacts/**/PAMU_CDS.*.nupkg
+          path: artifacts/**/PAMU_CDS.*.nupkg
         
