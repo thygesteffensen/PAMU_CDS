@@ -68,8 +68,11 @@ jobs:
           GIT_AUTHOR_EMAIL: 31892312+thygesteffensen@users.noreply.github.com
         run: npx semantic-release
         
+      - name: Ls
+        run: ls
+        
       - uses: actions/upload-artifact@v3
         with:
           name: PAMU CDS DLL
-          path: artifacts/**/PAMU_CDS.*.nupkg
+          path: PAMU_CDS/PAMU_CDS/artifacts/PAMU_CDS*.nupkg
         
