@@ -34,8 +34,15 @@ namespace PAMU_CDS.Auxiliary
                         continue;
                     }
 
+                    if (keyValuePair.Key == "statecode" || keyValuePair.Key == "statuscode")
+                    {
+                        var value = keyValuePair.Value.GetValue<int>();
+                        entity.Attributes[keyValuePair.Key] = new OptionSetValue(value);
+                        continue;
+                    }
+
                     // TODO: Figure out how to determine which value is expected.
-                    entity.Attributes[keyValuePair.Key] = keyValuePair.Value.GetValue<string>();
+                    entity.Attributes[keyValuePair.Key] = keyValuePair.Value.GetValue<object>();
                 }
             }
 
