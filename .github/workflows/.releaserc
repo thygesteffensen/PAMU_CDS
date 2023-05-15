@@ -17,5 +17,5 @@ plugins:
 #    - successComment: false
 #    - failureComment: false
 
-  - - "@semantic-release/exec"
-    - publishCmd: "dotnet nuget push ..\\..\\artifacts1\\PAMU_CDSce.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${process.env.CI_NUGET_API_KEY}"
+# - - "@semantic-release/exec"
+#    - publishCmd: "dotnet nuget push ..\\..\\artifacts1\\PAMU_CDSce.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${process.env.CI_NUGET_API_KEY}"

@@ -75,14 +75,14 @@ jobs:
         if: ${{ env.RELEASE_VERSION }}
         
       - name: Ls
-        run: ls artifacts
-        
-      - name: Ls
         run: ls artifacts2
+        
+      - name: Deubg1
+        run: cat PAMU_CDS/XrmMockupCdsTrigger.cs
         
       - uses: actions/upload-artifact@v3
         with:
           name: PAMU CDS DLL
-          path: artifacts2/PAMU_CDS*.nupkg
+          path: artifacts2/PAMU_CDS*
         if: ${{ env.RELEASE_VERSION }}
         
