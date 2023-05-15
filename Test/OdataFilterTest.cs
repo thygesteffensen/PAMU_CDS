@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk.Query;
 using PAMU_CDS.Auxiliary;
@@ -186,6 +187,21 @@ namespace Test
             Assert.AreEqual("fullname", filterExpression.Conditions.First().AttributeName);
             Assert.AreEqual(ConditionOperator.Contains, filterExpression.Conditions.First().Operator);
             Assert.AreEqual("Doe", filterExpression.Conditions.First().Values.First());
+        }
+
+        [TestMethod]
+        public void TestLookupValue()
+        {
+            var parser = new OdataFilter();
+            var id = Guid.NewGuid();
+            var filterExpression =
+                parser.OdataToFilterExpression($"_demo_school_value eq {id}");
+
+            Assert.AreEqual(1, filterExpression.Conditions.Count);
+            Assert.AreEqual(LogicalOperator.And, filterExpression.FilterOperator);
+            Assert.AreEqual("demo_school", filterExpression.Conditions.First().AttributeName);
+            Assert.AreEqual(ConditionOperator.Equal, filterExpression.Conditions.First().Operator);
+            Assert.AreEqual(id, filterExpression.Conditions.First().Values.First());
         }
     }
 }
