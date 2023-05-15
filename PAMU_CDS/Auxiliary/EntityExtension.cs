@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.Xrm.Sdk;
 using Parser.ExpressionParser;
 
@@ -26,12 +28,40 @@ namespace PAMU_CDS.Auxiliary
                 foreach (KeyValuePair<string, ValueContainer> keyValuePair in items
                     .GetValue<Dictionary<string, ValueContainer>>())
                 {
+                    if (keyValuePair.Key.Contains("@odata.bind"))
+                    {
+                        entity.AddLookupAttribute(keyValuePair.Key, keyValuePair.Value);
+                        continue;
+                    }
+
                     // TODO: Figure out how to determine which value is expected.
                     entity.Attributes[keyValuePair.Key] = keyValuePair.Value.GetValue<string>();
                 }
             }
 
             return entity;
+        }
+
+        private static void AddLookupAttribute(
+            this Entity entity, 
+            string key, 
+            ValueContainer valueContainer)
+        {
+            var attribute = key.Split('_').FirstOrDefault();
+            if (attribute == null) throw new Exception($"Unable to parse attribute from key {key}");
+
+            var valueRegex = Regex.Match(valueContainer.GetValue<string>(), "([^(]*)\\(([^)]*)\\)");
+            if (!valueRegex.Success) throw new Exception("Invalid format for lookup, expected something like accounts(030cae85-afa4-4cd2-96a8-a18b6301a6fa)");
+            var logicalPlural = valueRegex.Groups[1].Value;
+            if (!Guid.TryParse(valueRegex.Groups[2].Value, out Guid id)) throw new Exception($"Unable to parse id from {valueRegex.Groups[2].Value}");
+
+            entity.Attributes.Add(
+                attribute, 
+                new EntityReference(
+                    logicalPlural.Substring(0,logicalPlural.Length-1),
+                    id
+                )
+            );
         }
 
         public static ValueContainer ToValueContainer(this Entity entity)
