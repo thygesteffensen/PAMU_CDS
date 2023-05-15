@@ -14,16 +14,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # - name: Add nuget Source
-        # env:
-          # GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
-    
-      # - name: Set Github nuget API
-        # env:
-          # GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
-
       - name: Run tests
         run: dotnet test --verbosity normal --configuration Release
 
@@ -60,17 +50,7 @@ jobs:
         run: echo ${env:RELEASE_VERSION}
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-
-      # - name: Add nuget Source
-        # env:
-          # GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
-
-      # - name: Set Github nuget API
-        # env:
-          # GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Restore NuGet packages
         run: dotnet restore PAMU_CDS.sln /p:Configuration=Release
@@ -87,3 +67,9 @@ jobs:
           GIT_AUTHOR_NAME: thygesteffensen
           GIT_AUTHOR_EMAIL: 31892312+thygesteffensen@users.noreply.github.com
         run: npx semantic-release
+        
+      - uses: Upload artifact
+        with:
+          name: PAMU CDS DLL
+          path: ../artifacts/**/PAMU_CDS.*.nupkg
+        
