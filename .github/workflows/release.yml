@@ -74,12 +74,6 @@ jobs:
         run: npx semantic-release
         if: ${{ env.RELEASE_VERSION }}
         
-      - name: Ls
-        run: ls artifacts2
-        
-      - name: Deubg1
-        run: cat PAMU_CDS/XrmMockupCdsTrigger.cs
-        
       - uses: actions/upload-artifact@v3
         with:
           name: PAMU CDS DLL
