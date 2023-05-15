@@ -61,7 +61,7 @@ jobs:
         if: ${{ env.RELEASE_VERSION }}
 
       - name: Package PAMU
-        run: msbuild /t:pack /p:PackageVersion=${env:RELEASE_VERSION} /p:Configuration=Release /p:OutputPath=..\\artifacts
+        run: msbuild /t:pack /p:PackageVersion=${env:RELEASE_VERSION} /p:Configuration=Release /p:OutputPath=..\\artifacts2
         if: ${{ env.RELEASE_VERSION }}
 
       - name: Release to GitHub
@@ -75,11 +75,14 @@ jobs:
         if: ${{ env.RELEASE_VERSION }}
         
       - name: Ls
-        run: ls
+        run: ls artifacts
+        
+      - name: Ls
+        run: ls artifacts2
         
       - uses: actions/upload-artifact@v3
         with:
           name: PAMU CDS DLL
-          path: artifacts/PAMU_CDS*.nupkg
+          path: artifacts2/PAMU_CDS*.nupkg
         if: ${{ env.RELEASE_VERSION }}
         
