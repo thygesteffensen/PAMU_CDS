@@ -10,17 +10,7 @@ jobs:
     name: Testing
     steps:
       - name: Checkout code base
-        uses: actions/checkout@v2
-
-#      - name: Add nuget Source
-#        env:
-#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-#        run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
-#
-#      - name: Set Github nuget API
-#        env:
-#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-#        run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+        uses: actions/checkout@v3
 
       - name: Run tests
         run: dotnet test --verbosity normal --configuration Release
@@ -30,20 +20,10 @@ jobs:
     name: Building
     steps:
       - name: Checkout code base
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-
-#      - name: Add nuget Source
-#        env:
-#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-#        run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
-#
-#      - name: Set Github nuget API
-#        env:
-#          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-#        run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Restore NuGet packages
         run: dotnet restore PAMU_CDS.sln /p:Configuration=Release

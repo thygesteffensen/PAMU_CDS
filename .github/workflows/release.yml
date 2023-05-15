@@ -13,16 +13,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-
-      # - name: Add nuget Source
-        # env:
-          # GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
-    
-      # - name: Set Github nuget API
-        # env:
-          # GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+        
+      - name: Deubg1
+        run: cat PAMU_CDS/XrmMockupCdsTrigger.cs
 
       - name: Run tests
         run: dotnet test --verbosity normal --configuration Release
@@ -60,23 +53,15 @@ jobs:
         run: echo ${env:RELEASE_VERSION}
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-
-      # - name: Add nuget Source
-        # env:
-          # GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # run: nuget sources Add -Name Github -Source https://nuget.pkg.github.com/thygesteffensen/index.json -UserName thygesteffensen -Password $env:GH_TOKEN
-
-      # - name: Set Github nuget API
-        # env:
-          # GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # run: nuget setapikey $env:GH_TOKEN -Source https://nuget.pkg.github.com/thygesteffensen/index.json
+        uses: microsoft/setup-msbuild@v1.1
+        if: ${{ env.RELEASE_VERSION }}
 
       - name: Restore NuGet packages
         run: dotnet restore PAMU_CDS.sln /p:Configuration=Release
+        if: ${{ env.RELEASE_VERSION }}
 
       - name: Package PAMU
-        run: msbuild /t:pack /p:PackageVersion=${env:RELEASE_VERSION} /p:Configuration=Release /p:OutputPath=..\\artifacts
+        run: msbuild /t:pack /p:PackageVersion=${env:RELEASE_VERSION} /p:Configuration=Release /p:OutputPath=..\\artifacts2
         if: ${{ env.RELEASE_VERSION }}
 
       - name: Release to GitHub
@@ -87,3 +72,17 @@ jobs:
           GIT_AUTHOR_NAME: thygesteffensen
           GIT_AUTHOR_EMAIL: 31892312+thygesteffensen@users.noreply.github.com
         run: npx semantic-release
+        if: ${{ env.RELEASE_VERSION }}
+        
+      - name: Ls
+        run: ls artifacts2
+        
+      - name: Deubg1
+        run: cat PAMU_CDS/XrmMockupCdsTrigger.cs
+        
+      - uses: actions/upload-artifact@v3
+        with:
+          name: PAMU CDS DLL
+          path: artifacts2/PAMU_CDS*
+        if: ${{ env.RELEASE_VERSION }}
+        
