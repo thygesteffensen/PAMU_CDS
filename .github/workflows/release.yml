@@ -39,7 +39,7 @@ jobs:
       - name: Add plugin for executing bash commands
         run: npm install @semantic-release/exec -D
         working-directory: ./.github/workflows
-
+  
       - name: Dry Run Semantic to get next Version nummber
         working-directory: ./.github/workflows
         env:
@@ -49,7 +49,7 @@ jobs:
         run: |
           echo "RELEASE_VERSION=$((npx semantic-release --dry-run).Where({ $_ -like '*Release note*' }) | Out-String | Select-String '[0-9]+\.[0-9]+\.[0-9]+([-][a-zA-z]+[.][0-9]*)?' | % { $_.Matches } | % { $_.Value })" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Print release verison
+      - name: Print release version
         run: echo ${env:RELEASE_VERSION}
 
       - name: Setup MSBuild
