@@ -1,0 +1,137 @@
+﻿{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "demo_sharedcommondataserviceforapps_232e6"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "Enrollment_Created": {
+          "metadata": {
+            "operationMetadataId": "a7ab20dd-e8f9-4437-9ff8-603874bba46e"
+          },
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 1,
+              "subscriptionRequest/entityname": "demo_enrollment",
+              "subscriptionRequest/scope": 4
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Valid_Courses": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "5745c308-ece3-412a-b3ac-b0fbcc0947e1"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "demo_courses",
+              "$select": "demo_courseid",
+              "$filter": "_demo_school_value eq @{triggerOutputs()?['body/_demo_school_value']}"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Is_course_valid": {
+          "actions": {
+            "Set_is_valid": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "16e78da9-197e-4968-be3c-453592229f56"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "UpdateRecord",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "demo_enrollments",
+                  "recordId": "@triggerOutputs()?['body/demo_enrollmentid']",
+                  "item/statuscode": 345630002
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Valid_Courses": [
+              "Succeeded"
+            ]
+          },
+          "else": {
+            "actions": {
+              "Set_is_failed": {
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "8ac48d5a-3a2c-48da-becf-73de40d36db2"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_commondataserviceforapps",
+                    "operationId": "UpdateRecord",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                  },
+                  "parameters": {
+                    "entityName": "demo_enrollments",
+                    "recordId": "@triggerOutputs()?['body/demo_enrollmentid']",
+                    "item/statuscode": 345630001
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            }
+          },
+          "expression": {
+            "equals": [
+              "@contains(outputs('Valid_Courses')?['body/value'],triggerOutputs()?['body/_demo_course_value'])",
+              ""
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "fa226a30-aa03-420d-8391-d89a688526f5"
+          },
+          "type": "If"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
