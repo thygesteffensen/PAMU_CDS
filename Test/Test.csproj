@@ -28,6 +28,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Update="TestFlows\lookupfilter.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
         <None Update="TestFlows\LookupFlow.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -45,6 +48,6 @@
         </None>
     </ItemGroup>
 
-    <ProjectExtensions><VisualStudio><UserProperties testflows_4lookupflow_1json__JsonSchema="{" /></VisualStudio></ProjectExtensions>
+    <ProjectExtensions><VisualStudio><UserProperties testflows_4lookupfilter_1json__JsonSchema="{" testflows_4lookupflow_1json__JsonSchema="{" /></VisualStudio></ProjectExtensions>
 
 </Project>
