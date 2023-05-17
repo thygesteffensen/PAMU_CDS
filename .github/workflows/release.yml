@@ -82,4 +82,5 @@ jobs:
 
       - name: Publish to NuGet
         run: dotnet nuget push ..\\..\\artifacts\\PAMU_CDSce.*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${secrets.NUGETAPIKEY}
+        if: ${{ env.RELEASE_VERSION }}
         
