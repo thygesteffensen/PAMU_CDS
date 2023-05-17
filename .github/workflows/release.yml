@@ -61,7 +61,7 @@ jobs:
         if: ${{ env.RELEASE_VERSION }}
 
       - name: Package PAMU
-        run: msbuild /t:pack /p:PackageVersion=${env:RELEASE_VERSION} /p:Configuration=Release /p:OutputPath=..\\artifacts
+        run: dotnet pack --configuration Release -p:PackageVersion=${env:RELEASE_VERSION} --output artifacts --include-symbols
         if: ${{ env.RELEASE_VERSION }}
 
       - name: Release to GitHub
