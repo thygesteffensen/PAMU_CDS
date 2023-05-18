@@ -27,7 +27,14 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Sprache" Version="2.3.1" />
         <PackageReference Include="XrmMockup365" Version="1.12.1" />
-        <PackageReference Include="PowerAutomateMockUp" Version="2.0.0-alpha.2" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$(UsePowerAutomateMockUpLocal) == 'true'">
+        <ProjectReference Include="$(PowerAutomateMockUpLocalPath)/PowerAutomateMockUp/PowerAutomateMockUp.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$(UsePowerAutomateMockUpLocal) == 'false'">
+        <PackageReference Include="PowerAutomateMockUp" Version="2.0.0" />
     </ItemGroup>
     
 </Project>

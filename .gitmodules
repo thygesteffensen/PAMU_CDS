@@ -1,0 +1,3 @@
+[submodule "PowerAutomateMockUp"]
+	path = PowerAutomateMockUp
+	url = git@github.com:thygesteffensen/PowerAutomateMockUp.git
