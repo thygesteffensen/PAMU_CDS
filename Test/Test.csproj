@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <!--<PackageReference Include="bd1fe5ca33fd455dafb99d34768b8de4" Version="1.3.3-dev.10.0" />-->
         <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.29" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
         <PackageReference Include="Moq" Version="4.15.2" />
@@ -35,26 +34,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="TestFlows\lookupfilter.json">
+        <None Update="TestFlows\*">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="TestFlows\LookupFlow.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="TestFlows\Pure_CDS_ce.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="TestFlows\Single_Custom_Action.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="TestFlows\Single_Custom_ActionNonCdsTrigger.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="TestFlows\Every_CDS_ce_action.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-
-    <ProjectExtensions><VisualStudio><UserProperties testflows_4lookupfilter_1json__JsonSchema="{" testflows_4lookupflow_1json__JsonSchema="{" /></VisualStudio></ProjectExtensions>
 
 </Project>
