@@ -9,13 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		ReadMe.md = ReadMe.md
 		Directory.Build.props = Directory.Build.props
+		.editorconfig = .editorconfig
 	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerAutomateMockUp", "PowerAutomateMockUp", "{CE963091-D594-4860-A139-810D94FA8181}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerAutomateMockUp", "PowerAutomateMockUp\PowerAutomateMockUp\PowerAutomateMockUp.csproj", "{42E61660-EC88-4321-8377-B0493985F872}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "PowerAutomateMockUp\Test\Test.csproj", "{D3280D74-0EF5-4623-A631-ACFC07DAE59D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +34,5 @@ Global
 		{D3280D74-0EF5-4623-A631-ACFC07DAE59D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3280D74-0EF5-4623-A631-ACFC07DAE59D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3280D74-0EF5-4623-A631-ACFC07DAE59D}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{42E61660-EC88-4321-8377-B0493985F872} = {CE963091-D594-4860-A139-810D94FA8181}
-		{D3280D74-0EF5-4623-A631-ACFC07DAE59D} = {CE963091-D594-4860-A139-810D94FA8181}
 	EndGlobalSection
 EndGlobal
