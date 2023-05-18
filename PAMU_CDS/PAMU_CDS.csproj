@@ -8,9 +8,11 @@
 
         <PackageId>PAMU_CDSce</PackageId>
         <Authors>thygesteffensen</Authors>
-        <PackageDescription>This is a battery included mock for the Power Automate connector: Common Data Service (current environment). UNDER DEVELOPMENT - FEEL FREE TO USE</PackageDescription>
+        <PackageDescription>This is a battery included mock for the Power Automate connector: Common Data Service (current environment)</PackageDescription>
         <RepositoryUrl>https://github.com/thygesteffensen/PAMU_CDS</RepositoryUrl>
 
+        <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+        
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
