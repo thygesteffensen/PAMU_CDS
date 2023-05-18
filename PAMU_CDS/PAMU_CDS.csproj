@@ -8,14 +8,16 @@
 
         <PackageId>PAMU_CDSce</PackageId>
         <Authors>thygesteffensen</Authors>
-        <PackageDescription>This is a battery included mock for the Power Automate connector: Common Data Service (current environment). UNDER DEVELOPMENT - FEEL FREE TO USE</PackageDescription>
+        <PackageDescription>This is a battery included mock for the Power Automate connector: Common Data Service (current environment)</PackageDescription>
         <RepositoryUrl>https://github.com/thygesteffensen/PAMU_CDS</RepositoryUrl>
 
+        <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+        
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>
-        <!--<FrameworkReference Include="Microsoft.AspNetCore.App" />-->
+        <None Include="..\ReadMe.md" Pack="true" PackagePath="\"/>
         <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.29" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
@@ -25,7 +27,14 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Sprache" Version="2.3.1" />
         <PackageReference Include="XrmMockup365" Version="1.12.1" />
-        <PackageReference Include="PowerAutomateMockUp" Version="2.0.0-alpha.2" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$(UsePowerAutomateMockUpLocal) == 'true'">
+        <ProjectReference Include="$(PowerAutomateMockUpLocalPath)/PowerAutomateMockUp/PowerAutomateMockUp.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$(UsePowerAutomateMockUpLocal) == 'false'">
+        <PackageReference Include="PowerAutomateMockUp" Version="2.0.0" />
     </ItemGroup>
     
 </Project>

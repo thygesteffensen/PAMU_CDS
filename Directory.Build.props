@@ -1,0 +1,6 @@
+<Project>
+ <PropertyGroup>
+   <UsePowerAutomateMockUpLocal>false</UsePowerAutomateMockUpLocal>
+   <PowerAutomateMockUpLocalPath>../PowerAutomateMockUp</PowerAutomateMockUpLocalPath>
+ </PropertyGroup>
+</Project>

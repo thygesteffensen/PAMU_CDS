@@ -59,6 +59,9 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore PAMU_CDS.sln /p:Configuration=Release
         if: ${{ env.RELEASE_VERSION }}
+        
+      - name: DotNet Clean
+        run: dotnet clean
 
       - name: Package PAMU
         run: dotnet pack --configuration Release -p:PackageVersion=${env:RELEASE_VERSION} --output artifacts --include-symbols
